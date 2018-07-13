@@ -1,0 +1,16 @@
+[
+{
+  "modid": "treetweaker",
+  "name": "TreeTweaker",
+  "description": "Tweak Trees with ZenScript(CraftTweaker)",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["SuperFluke"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
