@@ -8,14 +8,15 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class FlukeTreeGen implements IWorldGenerator
 {
-	private WorldGenTreesTest tree;// = new WorldGenTreesTest(false);
+	private WorldGenAbstractTree tree;
 	
-	public FlukeTreeGen(WorldGenTreesTest tree)
+	public FlukeTreeGen(WorldGenAbstractTree tree)
 	{
 		this.tree = tree;
 	}

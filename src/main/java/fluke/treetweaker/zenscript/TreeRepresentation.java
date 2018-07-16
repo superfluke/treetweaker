@@ -6,19 +6,26 @@ import crafttweaker.mc1120.block.MCBlockDefinition;
 import crafttweaker.mc1120.block.MCItemBlock;
 import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.world.WorldGenTreesTest;
+import fluke.treetweaker.world.treegen.TreeGenAcacia;
+import fluke.treetweaker.world.treegen.TreeGenCanopy;
+import fluke.treetweaker.world.treegen.TreeGenJungle;
+import fluke.treetweaker.world.treegen.TreeGenOak;
+import fluke.treetweaker.world.treegen.TreeGenPine;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
 
 public class TreeRepresentation 
 {
-
+	public static enum TreeType {OAK, JUNGLE, CANOPY, PINE, ACACIA}
 	public String treeName;
 	public IBlockState log;
 	public IBlockState leaf;
+	public TreeType treeType;
 	
 	@ZenProperty
 	public int minTreeHeight;
@@ -26,7 +33,7 @@ public class TreeRepresentation
 	@ZenProperty
 	public int extraTreeHeight;
 	
-	private WorldGenTreesTest tree;
+	private WorldGenAbstractTree tree;
 	
 	public TreeRepresentation(String name)
 	{
@@ -35,13 +42,34 @@ public class TreeRepresentation
 		this.leaf = Blocks.DIAMOND_BLOCK.getDefaultState();
 		this.minTreeHeight = 5;
 		this.extraTreeHeight = 3;
+		this.treeType = TreeType.JUNGLE;
 	}
 	
 	@ZenMethod
 	public void register() 
 	{
 		int generationWeight = 2;
-		this.tree = new WorldGenTreesTest(this);
+		switch(treeType)
+		{
+			case OAK:
+				this.tree = new TreeGenOak(this);
+				break;
+			case CANOPY:
+				this.tree = new TreeGenCanopy(this);
+				break;
+			case JUNGLE:
+				this.tree = new TreeGenJungle(this);
+				break;
+			case PINE:
+				this.tree = new TreeGenPine(this);
+				break;
+			case ACACIA:
+				this.tree = new TreeGenAcacia(this);
+				break;
+			default:
+				this.tree = new WorldGenTreesTest(this);
+		}
+		
 		CraftTweakerAPI.logInfo("Adding tree '" + this.treeName + "' to world gen");
 		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree), generationWeight);
 	}
