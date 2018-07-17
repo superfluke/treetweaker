@@ -16,41 +16,27 @@ import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
 public class TreeGenJungle extends WorldGenHugeTrees  
 {
-	protected IBlockState log = Blocks.LOG.getDefaultState();
-    protected IBlockState leaf = Blocks.LEAVES.getDefaultState();
-    protected int minTreeHeight = 10;
-    protected int extraTreeHeight = 20;
     protected TreeType treeType = TreeType.JUNGLE;
 
-	public TreeGenJungle(boolean doNotify) 
-	{
-		super(doNotify, 10, 20, Blocks.LOG.getDefaultState(), Blocks.LEAVES.getDefaultState());
-	}
-	
 	public TreeGenJungle(TreeRepresentation tree)
     {
-    	this(false);
-    	this.log = tree.log;
-    	this.leaf = tree.leaf;    
-    	this.minTreeHeight = tree.minTreeHeight;
-    	this.extraTreeHeight = tree.extraTreeHeight;
-    	this.treeType = tree.treeType;
+		super(false, tree.minTreeHeight, tree.extraTreeHeight, tree.log, tree.leaf);
     }
 
 	@Override
 	public boolean generate(World worldIn, Random rand, BlockPos position)
     {
-        int i = rand.nextInt(extraTreeHeight) + minTreeHeight;
+        int treeheight = rand.nextInt(extraRandomHeight) + baseHeight;
 
-        if (!this.ensureGrowable(worldIn, rand, position, i))
+        if (!this.ensureGrowable(worldIn, rand, position, treeheight))
         {
             return false;
         }
         else
         {
-            this.createCrown(worldIn, position.up(i), 2);
+            this.createCrown(worldIn, position.up(treeheight), 2);
 
-            for (int j = position.getY() + i - 2 - rand.nextInt(4); j > position.getY() + i / 2; j -= 2 + rand.nextInt(4))
+            for (int j = position.getY() + treeheight - 2 - rand.nextInt(4); j > position.getY() + treeheight / 2; j -= 2 + rand.nextInt(4))
             {
                 float f = rand.nextFloat() * ((float)Math.PI * 2F);
                 int k = position.getX() + (int)(0.5F + MathHelper.cos(f) * 4.0F);
@@ -60,7 +46,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
                 {
                     k = position.getX() + (int)(1.5F + MathHelper.cos(f) * (float)i1);
                     l = position.getZ() + (int)(1.5F + MathHelper.sin(f) * (float)i1);
-                    this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), log);
+                    this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), woodMetadata);
                 }
 
                 int j2 = 1 + rand.nextInt(2);
@@ -73,13 +59,13 @@ public class TreeGenJungle extends WorldGenHugeTrees
                 }
             }
 
-            for (int i2 = 0; i2 < i; ++i2)
+            for (int i2 = 0; i2 < treeheight; ++i2)
             {
                 BlockPos blockpos = position.up(i2);
 
                 if (this.isAirLeaves(worldIn,blockpos))
                 {
-                    this.setBlockAndNotifyAdequately(worldIn, blockpos, log);
+                    this.setBlockAndNotifyAdequately(worldIn, blockpos, woodMetadata);
 
                     if (i2 > 0)
                     {
@@ -88,13 +74,13 @@ public class TreeGenJungle extends WorldGenHugeTrees
                     }
                 }
 
-                if (i2 < i - 1)
+                if (i2 < treeheight - 1)
                 {
                     BlockPos blockpos1 = blockpos.east();
 
                     if (this.isAirLeaves(worldIn,blockpos1))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos1, log);
+                        this.setBlockAndNotifyAdequately(worldIn, blockpos1, woodMetadata);
 
                         if (i2 > 0)
                         {
@@ -107,7 +93,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
 
                     if (this.isAirLeaves(worldIn,blockpos2))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos2, log);
+                        this.setBlockAndNotifyAdequately(worldIn, blockpos2, woodMetadata);
 
                         if (i2 > 0)
                         {
@@ -120,7 +106,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
 
                     if (this.isAirLeaves(worldIn,blockpos3))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos3, log);
+                        this.setBlockAndNotifyAdequately(worldIn, blockpos3, woodMetadata);
 
                         if (i2 > 0)
                         {
@@ -135,21 +121,21 @@ public class TreeGenJungle extends WorldGenHugeTrees
         }
     }
 
-    private void placeVine(World p_181632_1_, Random p_181632_2_, BlockPos p_181632_3_, PropertyBool p_181632_4_)
+    private void placeVine(World world, Random rand, BlockPos pos, PropertyBool direction)
     {
-        if (p_181632_2_.nextInt(3) > 0 && p_181632_1_.isAirBlock(p_181632_3_))
+        if (rand.nextInt(3) > 0 && world.isAirBlock(pos))
         {
-            this.setBlockAndNotifyAdequately(p_181632_1_, p_181632_3_, Blocks.VINE.getDefaultState().withProperty(p_181632_4_, Boolean.valueOf(true)));
+            this.setBlockAndNotifyAdequately(world, pos, Blocks.VINE.getDefaultState().withProperty(direction, Boolean.valueOf(true)));
         }
     }
 
-    private void createCrown(World worldIn, BlockPos p_175930_2_, int p_175930_3_)
+    private void createCrown(World worldIn, BlockPos pos, int width)
     {
         int i = 2;
 
         for (int j = -2; j <= 0; ++j)
         {
-            this.growLeavesLayerStrict(worldIn, p_175930_2_.up(j), p_175930_3_ + 1 - j);
+            this.growLeavesLayerStrict(worldIn, pos.up(j), width + 1 - j);
         }
     }
 

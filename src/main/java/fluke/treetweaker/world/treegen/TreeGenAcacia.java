@@ -13,11 +13,8 @@ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
 public class TreeGenAcacia extends WorldGenAbstractTree  
 {
-	protected IBlockState log = Blocks.LOG.getDefaultState();
-    protected IBlockState leaf = Blocks.LEAVES.getDefaultState();
-    protected int minTreeHeight = 5;
-    protected int extraTreeHeight = 0;
-    protected TreeType treeType = TreeType.CANOPY;
+	protected TreeRepresentation treeInfo;
+    protected TreeType treeType = TreeType.ACACIA;
 
 	public TreeGenAcacia(boolean doNotify) 
 	{
@@ -27,11 +24,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
 	public TreeGenAcacia(TreeRepresentation tree)
     {
     	super(false);
-    	this.log = tree.log;
-    	this.leaf = tree.leaf;    
-    	this.minTreeHeight = tree.minTreeHeight;
-    	this.extraTreeHeight = tree.extraTreeHeight;
-    	this.treeType = tree.treeType;
+    	treeInfo = tree;
     }
 	
 	@Override
@@ -218,7 +211,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
 	
 	private void placeLogAt(World worldIn, BlockPos pos)
     {
-        this.setBlockAndNotifyAdequately(worldIn, pos, log);
+        this.setBlockAndNotifyAdequately(worldIn, pos, treeInfo.log);
     }
 
     private void placeLeafAt(World worldIn, BlockPos pos)
@@ -227,7 +220,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
 
         if (state.getBlock().isAir(state, worldIn, pos) || state.getBlock().isLeaves(state, worldIn, pos))
         {
-            this.setBlockAndNotifyAdequately(worldIn, pos, leaf);
+            this.setBlockAndNotifyAdequately(worldIn, pos, treeInfo.leaf);
         }
     }
 }

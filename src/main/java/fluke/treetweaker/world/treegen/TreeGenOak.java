@@ -14,10 +14,7 @@ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
 public class TreeGenOak extends WorldGenAbstractTree 
 {
-	protected IBlockState log = Blocks.LOG.getDefaultState();
-    protected IBlockState leaf = Blocks.LEAVES.getDefaultState();
-    protected int minTreeHeight = 5;
-    protected int extraTreeHeight = 0;
+	protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.OAK;
 
 	public TreeGenOak(boolean doNotify) 
@@ -28,17 +25,13 @@ public class TreeGenOak extends WorldGenAbstractTree
 	public TreeGenOak(TreeRepresentation tree)
     {
     	super(false);
-    	this.log = tree.log;
-    	this.leaf = tree.leaf;    
-    	this.minTreeHeight = tree.minTreeHeight;
-    	this.extraTreeHeight = tree.extraTreeHeight;
-    	this.treeType = tree.treeType;
+    	treeInfo = tree;
     }
 	
 	@Override
 	public boolean generate(World worldIn, Random rand, BlockPos position)
     {
-        int treeHeight = rand.nextInt(this.extraTreeHeight) + this.minTreeHeight;
+        int treeHeight = rand.nextInt(treeInfo.extraTreeHeight) + treeInfo.minTreeHeight;
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + treeHeight + 1 <= worldIn.getHeight())
@@ -112,7 +105,7 @@ public class TreeGenOak extends WorldGenAbstractTree
 
                                     if (state.getBlock().isAir(state, worldIn, blockpos) || state.getBlock().isLeaves(state, worldIn, blockpos) || state.getMaterial() == Material.VINE)
                                     {
-                                        this.setBlockAndNotifyAdequately(worldIn, blockpos, this.leaf);
+                                        this.setBlockAndNotifyAdequately(worldIn, blockpos, treeInfo.leaf);
                                     }
                                 }
                             }
@@ -126,94 +119,10 @@ public class TreeGenOak extends WorldGenAbstractTree
 
                         if (state.getBlock().isAir(state, worldIn, upN) || state.getBlock().isLeaves(state, worldIn, upN) || state.getMaterial() == Material.VINE)
                         {
-                            this.setBlockAndNotifyAdequately(worldIn, position.up(j3), this.log);
+                            this.setBlockAndNotifyAdequately(worldIn, position.up(j3), treeInfo.log);
 
-//                            if (this.vinesGrow && j3 > 0)
-//                            {
-//                                if (rand.nextInt(3) > 0 && worldIn.isAirBlock(position.add(-1, j3, 0)))
-//                                {
-//                                    this.addVine(worldIn, position.add(-1, j3, 0), BlockVine.EAST);
-//                                }
-//
-//                                if (rand.nextInt(3) > 0 && worldIn.isAirBlock(position.add(1, j3, 0)))
-//                                {
-//                                    this.addVine(worldIn, position.add(1, j3, 0), BlockVine.WEST);
-//                                }
-//
-//                                if (rand.nextInt(3) > 0 && worldIn.isAirBlock(position.add(0, j3, -1)))
-//                                {
-//                                    this.addVine(worldIn, position.add(0, j3, -1), BlockVine.SOUTH);
-//                                }
-//
-//                                if (rand.nextInt(3) > 0 && worldIn.isAirBlock(position.add(0, j3, 1)))
-//                                {
-//                                    this.addVine(worldIn, position.add(0, j3, 1), BlockVine.NORTH);
-//                                }
-//                            }
                         }
                     }
-
-//                    if (this.vinesGrow)
-//                    {
-//                        for (int k3 = position.getY() - 3 + i; k3 <= position.getY() + i; ++k3)
-//                        {
-//                            int j4 = k3 - (position.getY() + i);
-//                            int k4 = 2 - j4 / 2;
-//                            BlockPos.MutableBlockPos blockpos$mutableblockpos1 = new BlockPos.MutableBlockPos();
-//
-//                            for (int l4 = position.getX() - k4; l4 <= position.getX() + k4; ++l4)
-//                            {
-//                                for (int i5 = position.getZ() - k4; i5 <= position.getZ() + k4; ++i5)
-//                                {
-//                                    blockpos$mutableblockpos1.setPos(l4, k3, i5);
-//
-//                                    state = worldIn.getBlockState(blockpos$mutableblockpos1);
-//                                    if (state.getBlock().isLeaves(state, worldIn, blockpos$mutableblockpos1))
-//                                    {
-//                                        BlockPos blockpos2 = blockpos$mutableblockpos1.west();
-//                                        BlockPos blockpos3 = blockpos$mutableblockpos1.east();
-//                                        BlockPos blockpos4 = blockpos$mutableblockpos1.north();
-//                                        BlockPos blockpos1 = blockpos$mutableblockpos1.south();
-//
-//                                        if (rand.nextInt(4) == 0 && worldIn.isAirBlock(blockpos2))
-//                                        {
-//                                            this.addHangingVine(worldIn, blockpos2, BlockVine.EAST);
-//                                        }
-//
-//                                        if (rand.nextInt(4) == 0 && worldIn.isAirBlock(blockpos3))
-//                                        {
-//                                            this.addHangingVine(worldIn, blockpos3, BlockVine.WEST);
-//                                        }
-//
-//                                        if (rand.nextInt(4) == 0 && worldIn.isAirBlock(blockpos4))
-//                                        {
-//                                            this.addHangingVine(worldIn, blockpos4, BlockVine.SOUTH);
-//                                        }
-//
-//                                        if (rand.nextInt(4) == 0 && worldIn.isAirBlock(blockpos1))
-//                                        {
-//                                            this.addHangingVine(worldIn, blockpos1, BlockVine.NORTH);
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//                        if (rand.nextInt(5) == 0 && i > 5)
-//                        {
-//                            for (int l3 = 0; l3 < 2; ++l3)
-//                            {
-//                                for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-//                                {
-//                                    if (rand.nextInt(4 - l3) == 0)
-//                                    {
-//                                        EnumFacing enumfacing1 = enumfacing.getOpposite();
-//                                        this.placeCocoa(worldIn, rand.nextInt(3), position.add(enumfacing1.getFrontOffsetX(), i - 5 + l3, enumfacing1.getFrontOffsetZ()), enumfacing);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
 
                     return true;
                 }
@@ -228,5 +137,4 @@ public class TreeGenOak extends WorldGenAbstractTree
             return false;
         }
     }	
-
 }

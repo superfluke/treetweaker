@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
 import fluke.treetweaker.world.FlukeTreeGen;
-import fluke.treetweaker.world.WorldGenTreesTest;
 import fluke.treetweaker.zenscript.PluginCraftTweaker;
 import fluke.treetweaker.proxy.CommonProxy;
 

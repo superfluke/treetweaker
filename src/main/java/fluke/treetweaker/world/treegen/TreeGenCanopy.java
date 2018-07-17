@@ -13,10 +13,7 @@ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
 public class TreeGenCanopy extends WorldGenAbstractTree  
 {
-	protected IBlockState log = Blocks.LOG.getDefaultState();
-    protected IBlockState leaf = Blocks.LEAVES.getDefaultState();
-    protected int minTreeHeight = 5;
-    protected int extraTreeHeight = 0;
+	protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.CANOPY;
 
 	public TreeGenCanopy(boolean doNotify) 
@@ -27,32 +24,28 @@ public class TreeGenCanopy extends WorldGenAbstractTree
 	public TreeGenCanopy(TreeRepresentation tree)
     {
     	super(false);
-    	this.log = tree.log;
-    	this.leaf = tree.leaf;    
-    	this.minTreeHeight = tree.minTreeHeight;
-    	this.extraTreeHeight = tree.extraTreeHeight;
-    	this.treeType = tree.treeType;
+    	treeInfo = tree;
     }
 
 	@Override
 	 public boolean generate(World worldIn, Random rand, BlockPos position)
     {
-        int i = rand.nextInt(3) + rand.nextInt(2) + 6; //TODO max size/extra tree height stuff here
+        int treeheight = rand.nextInt(treeInfo.extraTreeHeight) + treeInfo.minTreeHeight; 
         int j = position.getX();
         int k = position.getY();
         int l = position.getZ();
 
-        if (k >= 1 && k + i + 1 < 256)
+        if (k >= 1 && k + treeheight + 1 < 256)
         {
             BlockPos blockpos = position.down();
             IBlockState state = worldIn.getBlockState(blockpos);
             boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
 
-            if (!(isSoil && position.getY() < worldIn.getHeight() - i - 1))
+            if (!(isSoil && position.getY() < worldIn.getHeight() - treeheight - 1))
             {
                 return false;
             }
-            else if (!this.placeTreeOfHeight(worldIn, position, i))
+            else if (!this.placeTreeOfHeight(worldIn, position, treeheight))
             {
                 return false;
             }
@@ -63,13 +56,13 @@ public class TreeGenCanopy extends WorldGenAbstractTree
                 this.onPlantGrow(worldIn, blockpos.south(), position);
                 this.onPlantGrow(worldIn, blockpos.south().east(), position);
                 EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(rand);
-                int i1 = i - rand.nextInt(4);
+                int i1 = treeheight - rand.nextInt(4);
                 int j1 = 2 - rand.nextInt(3);
                 int k1 = j;
                 int l1 = l;
-                int i2 = k + i - 1;
+                int i2 = k + treeheight - 1;
 
-                for (int j2 = 0; j2 < i; ++j2)
+                for (int j2 = 0; j2 < treeheight; ++j2)
                 {
                     if (j2 >= i1 && j1 > 0)
                     {
@@ -215,7 +208,7 @@ public class TreeGenCanopy extends WorldGenAbstractTree
     {
         if (this.canGrowInto(worldIn.getBlockState(pos).getBlock()))
         {
-            this.setBlockAndNotifyAdequately(worldIn, pos, log);
+            this.setBlockAndNotifyAdequately(worldIn, pos, treeInfo.log);
         }
     }
 
@@ -226,7 +219,7 @@ public class TreeGenCanopy extends WorldGenAbstractTree
 
         if (state.getBlock().isAir(state, worldIn, blockpos))
         {
-            this.setBlockAndNotifyAdequately(worldIn, blockpos, leaf);
+            this.setBlockAndNotifyAdequately(worldIn, blockpos, treeInfo.leaf);
         }
     }
 
