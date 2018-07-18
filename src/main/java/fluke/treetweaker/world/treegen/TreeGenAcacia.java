@@ -30,12 +30,12 @@ public class TreeGenAcacia extends WorldGenAbstractTree
 	@Override
 	public boolean generate(World worldIn, Random rand, BlockPos position)
     {
-        int i = rand.nextInt(3) + rand.nextInt(3) + 5;
+        int treeheight = rand.nextInt(treeInfo.extraTreeHeight) + treeInfo.minTreeHeight; 
         boolean flag = true;
 
-        if (position.getY() >= 1 && position.getY() + i + 1 <= 256)
+        if (position.getY() >= 1 && position.getY() + treeheight + 1 <= 256)
         {
-            for (int j = position.getY(); j <= position.getY() + 1 + i; ++j)
+            for (int j = position.getY(); j <= position.getY() + 1 + treeheight; ++j)
             {
                 int k = 1;
 
@@ -44,7 +44,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
                     k = 0;
                 }
 
-                if (j >= position.getY() + 1 + i - 2)
+                if (j >= position.getY() + 1 + treeheight - 2)
                 {
                     k = 2;
                 }
@@ -80,17 +80,17 @@ public class TreeGenAcacia extends WorldGenAbstractTree
                 IBlockState state = worldIn.getBlockState(down);
                 boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
 
-                if (isSoil && position.getY() < worldIn.getHeight() - i - 1)
+                if (isSoil && position.getY() < worldIn.getHeight() - treeheight - 1)
                 {
                     state.getBlock().onPlantGrow(state, worldIn, down, position);
                     EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.random(rand);
-                    int k2 = i - rand.nextInt(4) - 1;
+                    int k2 = treeheight - rand.nextInt(4) - 1;
                     int l2 = 3 - rand.nextInt(3);
                     int i3 = position.getX();
                     int j1 = position.getZ();
                     int k1 = 0;
 
-                    for (int l1 = 0; l1 < i; ++l1)
+                    for (int l1 = 0; l1 < treeheight; ++l1)
                     {
                         int i2 = position.getY() + l1;
 
@@ -148,7 +148,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
                         int k4 = 1 + rand.nextInt(3);
                         k1 = 0;
 
-                        for (int l4 = l3; l4 < i && k4 > 0; --k4)
+                        for (int l4 = l3; l4 < treeheight && k4 > 0; --k4)
                         {
                             if (l4 >= 1)
                             {
