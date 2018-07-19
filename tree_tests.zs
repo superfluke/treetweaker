@@ -16,7 +16,7 @@ largeoak.extraTreeHeight = 6;
 largeoak.minTreeHeight = 15;
 largeoak.setTreeType("LARGE_OAK");
 largeoak.generationFrequency = 8;
-largeoak.extraThick = true;
+largeoak.extraThick = true; //will make trunk 2x2
 largeoak.register();
 
 var jungle = TreeFactory.createTree("jungle");
@@ -67,6 +67,28 @@ hillrocks.setMinHeight(1);
 hillrocks.setLeaf("minecraft:stone:2");
 hillrocks.setLog("minecraft:stone:1");
 hillrocks.register();
+
+var spruce = TreeFactory.createTree("spruce");
+spruce.setLeaf("minecraft:concrete:9");
+spruce.setGenFrequency(4);
+spruce.setTreeType("LARGE_SPRUCE");
+spruce.setMinHeight(9);
+spruce.setExtraHeight(9);
+spruce.setGenBiome("minecraft:roofed_forest");
+spruce.register();
+
+var deserttree = TreeFactory.createTree("hawt");
+deserttree.setLeaf("minecraft:black_glazed_terracotta");
+deserttree.setLog("minecraft:red_sandstone");
+deserttree.setGenFrequency(4);
+deserttree.setTreeType("SPRUCE");
+deserttree.setMinHeight(9);
+deserttree.setExtraHeight(9);
+deserttree.extraThick = true; //will turn this into LARGE_SPRUCE
+deserttree.setGenBiome("minecraft:desert");
+deserttree.setBaseBlock("minecraft:sand");
+deserttree.register();
+
 
 var errortree = TreeFactory.createTree("garbo");
 errortree.setGenBiome("minecraft:notreal");

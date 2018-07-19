@@ -23,7 +23,6 @@ public class TreeGenLargeOak extends WorldGenAbstractTree
 	protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.LARGE_OAK;
     protected Random rand;
-//    protected World world;
     public BlockPos basePos = BlockPos.ORIGIN;
     public int heightLimit;
     public int height;
@@ -332,7 +331,12 @@ public class TreeGenLargeOak extends WorldGenAbstractTree
     {
         BlockPos down = this.basePos.down();
         net.minecraft.block.state.IBlockState state = world.getBlockState(down);
-        boolean isSoil = state.getBlock().canSustainPlant(state, world, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
+        boolean isSoil;
+        
+        if(treeInfo.validBaseBlock != null)
+        	isSoil = (treeInfo.validBaseBlock == state);
+        else
+        	isSoil = state.getBlock().canSustainPlant(state, world, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
 
         if (!isSoil)
         {

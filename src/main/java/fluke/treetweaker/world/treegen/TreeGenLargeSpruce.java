@@ -4,23 +4,19 @@ import java.util.Random;
 
 import fluke.treetweaker.zenscript.TreeRepresentation;
 import fluke.treetweaker.zenscript.TreeRepresentation.TreeType;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
-public class TreeGenLargePine extends WorldGenHugeTrees
+public class TreeGenLargeSpruce extends WorldGenHugeTrees
 {
 	protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.PINE;
     	
-	public TreeGenLargePine(TreeRepresentation tree)
+	public TreeGenLargeSpruce(TreeRepresentation tree)
     {
 		super(false, tree.minTreeHeight, tree.extraTreeHeight, tree.log, tree.leaf);
 		treeInfo = tree;
@@ -37,42 +33,42 @@ public class TreeGenLargePine extends WorldGenHugeTrees
         }
         else
         {
-            this.createCrown(worldIn, position.getX(), position.getZ(), position.getY() + treeheight, 0, rand);
+            
 
-            for (int j = 0; j < treeheight; ++j)
+            for (int j = 0; j < (treeheight*0.75); ++j)
             {
                 if (isAirLeaves(worldIn, position.up(j)))
                 {
-                    this.setBlockAndNotifyAdequately(worldIn, position.up(j), this.woodMetadata);
+                    this.setBlockAndNotifyAdequately(worldIn, position.up(j), treeInfo.log);
                 }
 
                 if (j < treeheight - 1)
                 {
                     if (isAirLeaves(worldIn, position.add(1, j, 0)))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 0), this.woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 0),  treeInfo.log);
                     }
 
                     if (isAirLeaves(worldIn, position.add(1, j, 1)))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 1), this.woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 1),  treeInfo.log);
                     }
 
 
                     if (isAirLeaves(worldIn, position.add(0, j, 1)))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, position.add(0, j, 1), this.woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, position.add(0, j, 1),  treeInfo.log);
                     }
                 }
             }
-
+            this.createCrown(worldIn, position.getX(), position.getZ(), position.getY() + treeheight, 0, treeheight, rand);
             return true;
         }
     }
 	
-	private void createCrown(World worldIn, int x, int z, int y, int trunktop, Random rand)
+	private void createCrown(World worldIn, int x, int z, int y, int trunktop, int treeheight, Random rand)
     {
-		int i = rand.nextInt(5) +  3;
+        int i = rand.nextInt((int)(treeheight/4)) + (int)(treeheight/2);
         int j = 0;
 
         for (int k = y - i; k <= y; ++k)

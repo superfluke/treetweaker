@@ -10,7 +10,7 @@ public class CommonProxy
 {
 	public void init()
 	{
-		MinecraftForge.TERRAIN_GEN_BUS.register(this);
+//		MinecraftForge.TERRAIN_GEN_BUS.register(this);
 	}
 	
 	@SubscribeEvent

@@ -16,11 +16,13 @@ import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
 public class TreeGenJungle extends WorldGenHugeTrees  
 {
+	protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.JUNGLE;
 
 	public TreeGenJungle(TreeRepresentation tree)
     {
 		super(false, tree.minTreeHeight, tree.extraTreeHeight, tree.log, tree.leaf);
+		treeInfo = tree;
     }
 
 	@Override
@@ -145,6 +147,88 @@ public class TreeGenJungle extends WorldGenHugeTrees
         IBlockState state = world.getBlockState(pos);
         return state.getBlock().isAir(state, world, pos) || state.getBlock().isLeaves(state, world, pos);
     }
+    
+    private boolean ensureDirtsUnderneath(BlockPos pos, World worldIn)
+    {
+        BlockPos blockpos = pos.down();
+        IBlockState state = worldIn.getBlockState(blockpos);
+        boolean isSoil;
+        
+        if(treeInfo.validBaseBlock != null)
+        	isSoil = (treeInfo.validBaseBlock == state);
+        else
+        	isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
 
+        if (isSoil && pos.getY() >= 2)
+        {
+            this.onPlantGrow(worldIn, blockpos, pos);
+            this.onPlantGrow(worldIn, blockpos.east(), pos);
+            this.onPlantGrow(worldIn, blockpos.south(), pos);
+            this.onPlantGrow(worldIn, blockpos.south().east(), pos);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * returns whether or not a tree can grow at a specific position.
+     * If it can, it generates surrounding dirt underneath.
+     */
+    protected boolean ensureGrowable(World worldIn, Random rand, BlockPos treePos, int height)
+    {
+        return this.isSpaceAt(worldIn, treePos, height) && this.ensureDirtsUnderneath(treePos, worldIn);
+    }
+    
+  //Just a helper macro
+    private void onPlantGrow(World world, BlockPos pos, BlockPos source)
+    {
+        IBlockState state = world.getBlockState(pos);
+        state.getBlock().onPlantGrow(state, world, pos, source);
+    }
+
+    /**
+     * returns whether or not there is space for a tree to grow at a certain position
+     */
+    private boolean isSpaceAt(World worldIn, BlockPos leavesPos, int height)
+    {
+        boolean flag = true;
+
+        if (leavesPos.getY() >= 1 && leavesPos.getY() + height + 1 <= 256)
+        {
+            for (int i = 0; i <= 1 + height; ++i)
+            {
+                int j = 2;
+
+                if (i == 0)
+                {
+                    j = 1;
+                }
+                else if (i >= 1 + height - 2)
+                {
+                    j = 2;
+                }
+
+                for (int k = -j; k <= j && flag; ++k)
+                {
+                    for (int l = -j; l <= j && flag; ++l)
+                    {
+                        if (leavesPos.getY() + i < 0 || leavesPos.getY() + i >= 256 || !this.isReplaceable(worldIn,leavesPos.add(k, i, l)))
+                        {
+                            flag = false;
+                        }
+                    }
+                }
+            }
+
+            return flag;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 }

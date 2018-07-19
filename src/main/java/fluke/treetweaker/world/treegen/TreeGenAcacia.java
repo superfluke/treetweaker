@@ -49,7 +49,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
                     k = 2;
                 }
 
-                BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+                BlockPos.MutableBlockPos mutableblockpos = new BlockPos.MutableBlockPos();
 
                 for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l)
                 {
@@ -57,7 +57,7 @@ public class TreeGenAcacia extends WorldGenAbstractTree
                     {
                         if (j >= 0 && j < 256)
                         {
-                            if (!this.isReplaceable(worldIn,blockpos$mutableblockpos.setPos(l, j, i1)))
+                            if (!this.isReplaceable(worldIn, mutableblockpos.setPos(l, j, i1)))
                             {
                                 flag = false;
                             }
@@ -78,8 +78,13 @@ public class TreeGenAcacia extends WorldGenAbstractTree
             {
                 BlockPos down = position.down();
                 IBlockState state = worldIn.getBlockState(down);
-                boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
-
+                boolean isSoil;
+                
+                if(treeInfo.validBaseBlock != null)
+                	isSoil = (treeInfo.validBaseBlock == state);
+                else 
+                	isSoil = state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
+                
                 if (isSoil && position.getY() < worldIn.getHeight() - treeheight - 1)
                 {
                     state.getBlock().onPlantGrow(state, worldIn, down, position);

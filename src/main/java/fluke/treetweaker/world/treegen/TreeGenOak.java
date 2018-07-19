@@ -50,7 +50,7 @@ public class TreeGenOak extends WorldGenAbstractTree
                     k = 2;
                 }
 
-                BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+                BlockPos.MutableBlockPos mutableblockpos = new BlockPos.MutableBlockPos();
 
                 for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l)
                 {
@@ -58,7 +58,7 @@ public class TreeGenOak extends WorldGenAbstractTree
                     {
                         if (j >= 0 && j < worldIn.getHeight())
                         {
-                            if (!this.isReplaceable(worldIn,blockpos$mutableblockpos.setPos(l, j, i1)))
+                            if (!this.isReplaceable(worldIn, mutableblockpos.setPos(l, j, i1)))
                             {
                                 flag = false;
                             }
@@ -77,9 +77,17 @@ public class TreeGenOak extends WorldGenAbstractTree
             }
             else
             {
-                IBlockState state = worldIn.getBlockState(position.down());
+            	BlockPos down = position.down();
+                IBlockState state = worldIn.getBlockState(down);
+                boolean isSoil;
+                
+                if(treeInfo.validBaseBlock != null)
+                	isSoil = (treeInfo.validBaseBlock == state);
+                else 
+                	isSoil = state.getBlock().canSustainPlant(state, worldIn, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
 
-                if (state.getBlock().canSustainPlant(state, worldIn, position.down(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.SAPLING) && position.getY() < worldIn.getHeight() - treeHeight - 1)
+
+                if (isSoil && position.getY() < worldIn.getHeight() - treeHeight - 1)
                 {
                     state.getBlock().onPlantGrow(state, worldIn, position.down(), position);
                     int k2 = 3;

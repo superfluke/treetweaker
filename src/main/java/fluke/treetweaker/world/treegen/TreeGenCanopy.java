@@ -28,7 +28,7 @@ public class TreeGenCanopy extends WorldGenAbstractTree
     }
 
 	@Override
-	 public boolean generate(World worldIn, Random rand, BlockPos position)
+	public boolean generate(World worldIn, Random rand, BlockPos position)
     {
         int treeheight = rand.nextInt(treeInfo.extraTreeHeight) + treeInfo.minTreeHeight; 
         int j = position.getX();
@@ -39,7 +39,12 @@ public class TreeGenCanopy extends WorldGenAbstractTree
         {
             BlockPos blockpos = position.down();
             IBlockState state = worldIn.getBlockState(blockpos);
-            boolean isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
+            boolean isSoil;
+            
+            if(treeInfo.validBaseBlock != null)
+            	isSoil = (treeInfo.validBaseBlock == state);
+            else 
+            	isSoil = state.getBlock().canSustainPlant(state, worldIn, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.SAPLING));
 
             if (!(isSoil && position.getY() < worldIn.getHeight() - treeheight - 1))
             {
@@ -173,7 +178,7 @@ public class TreeGenCanopy extends WorldGenAbstractTree
         int i = pos.getX();
         int j = pos.getY();
         int k = pos.getZ();
-        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos mutableblockpos = new BlockPos.MutableBlockPos();
 
         for (int l = 0; l <= height + 1; ++l)
         {
@@ -193,7 +198,7 @@ public class TreeGenCanopy extends WorldGenAbstractTree
             {
                 for (int k1 = -i1; k1 <= i1; ++k1)
                 {
-                    if (!this.isReplaceable(worldIn, blockpos$mutableblockpos.setPos(i + j1, j + l, k + k1)))
+                    if (!this.isReplaceable(worldIn, mutableblockpos.setPos(i + j1, j + l, k + k1)))
                     {
                         return false;
                     }
