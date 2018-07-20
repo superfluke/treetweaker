@@ -9,6 +9,7 @@ import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -17,12 +18,14 @@ public class FlukeTreeGen implements IWorldGenerator
 	private WorldGenAbstractTree tree;
 	private int genFrequency;
 	private Biome spawnBiome;
+	private BiomeDictionary.Type spawnBiomeType;
 	
-	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome)
+	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType)
 	{
 		this.tree = tree;
 		this.genFrequency = frequency;
 		this.spawnBiome = biome;
+		this.spawnBiomeType = biomeType;
 	}
 	
 	@Override
@@ -41,6 +44,13 @@ public class FlukeTreeGen implements IWorldGenerator
 			if(spawnBiome != null)
 			{
 				if(biome == spawnBiome)
+				{
+					tree.generate(world, random, pos);
+				}
+			}
+			else if(spawnBiomeType != null)	
+			{
+				if(BiomeDictionary.hasType(biome, spawnBiomeType))
 				{
 					tree.generate(world, random, pos);
 				}

@@ -47,7 +47,7 @@ public class TreeGenLargeOak extends WorldGenAbstractTree
     	if (tree.extraThick) trunkSize = 2;
     }
 	
-	@Override //TODO make it not randomly crash
+	@Override
 	public boolean generate(World worldIn, Random rand, BlockPos position)
     {
         this.basePos = position;

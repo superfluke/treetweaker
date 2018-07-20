@@ -23,6 +23,7 @@ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class TreeRepresentation 
 {
@@ -34,6 +35,7 @@ public class TreeRepresentation
 	public TreeType treeType;
 	public int generationWeight;
 	public Biome spawnBiome;
+	public BiomeDictionary.Type spawnBiomeType;
 	
 	@ZenProperty
 	public int minTreeHeight;
@@ -58,6 +60,7 @@ public class TreeRepresentation
 		this.generationFrequency = 5;
 		this.spawnBiome = null;
 		this.validBaseBlock = null;
+		this.spawnBiomeType = null;
 	}
 	
 	@ZenMethod
@@ -108,9 +111,9 @@ public class TreeRepresentation
 				CraftTweakerAPI.logWarning("Unknown tree type. Tree " + this.treeName + " defaulting to OAK");
 				this.tree = new TreeGenOak(this);
 		}
-		extraTreeHeight += 1;
+		extraTreeHeight += 1; //so rand function doesnt break if extra height is 0 and so the extra height generates from 0-num inclusive
 		CraftTweakerAPI.logInfo("Adding " + this.treeType.toString() + " tree '" + this.treeName + "' to world gen");
-		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome), generationWeight);
+		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType), generationWeight);
 	}
 	
 	@ZenMethod
@@ -192,6 +195,12 @@ public class TreeRepresentation
 	public void setBaseBlock(String block)
 	{
 		this.validBaseBlock = getStateFromString(block);
+	}
+	
+	@ZenMethod
+	public void setGenBiomeByTag(String tag)
+	{
+		this.spawnBiomeType = BiomeDictionary.Type.getType(tag);
 	}
 	
 	private IBlockState getStateFromString(String block)

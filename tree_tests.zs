@@ -89,6 +89,15 @@ deserttree.setGenBiome("minecraft:desert");
 deserttree.setBaseBlock("minecraft:sand");
 deserttree.register();
 
+var rocktree = TreeFactory.createTree("rocktree");
+rocktree.setLog("minecraft:purpur_block");
+rocktree.setLeaf("minecraft:packed_ice");
+rocktree.setTreeType("ACACIA");
+rocktree.setMinHeight(3);
+rocktree.setGenBiomeByTag("MOUNTAIN");
+rocktree.setBaseBlock("minecraft:stone");
+rocktree.register();
+
 
 var errortree = TreeFactory.createTree("garbo");
 errortree.setGenBiome("minecraft:notreal");
