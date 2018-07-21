@@ -28,7 +28,7 @@ public class TreeGenLargeOak extends WorldGenAbstractTree
     public int height;
     public double heightAttenuation = 0.618D;
     public double branchSlope = 0.381D;
-    public double scaleWidth = 1.20D;
+    public double scaleWidth = 1.10D;
     public double leafDensity = 1.0D;
     public int trunkSize = 1;
     /** Sets the distance limit for how far away the generator will populate leaves from the base leaf node. */
@@ -132,11 +132,6 @@ public class TreeGenLargeOak extends WorldGenAbstractTree
                 if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(leafSize * leafSize))
                 {
                     BlockPos blockpos = pos.add(j, 0, k);
-//                    if(world == null)
-//                    {
-//                    	System.out.println("nuly");
-//                    	return;
-//                    }
                     IBlockState state = world.getBlockState(blockpos);
                     if (state.getBlock().isAir(state, world, blockpos) || state.getBlock().isLeaves(state, world, blockpos))
                     {
