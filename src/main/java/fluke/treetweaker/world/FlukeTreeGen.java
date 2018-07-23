@@ -19,46 +19,67 @@ public class FlukeTreeGen implements IWorldGenerator
 	private int genFrequency;
 	private Biome spawnBiome;
 	private BiomeDictionary.Type spawnBiomeType;
+	private int[] dimensionWhitelist;
 	
-	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType)
+	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType, int[] dimWhitelist)
 	{
 		this.tree = tree;
 		this.genFrequency = frequency;
 		this.spawnBiome = biome;
 		this.spawnBiomeType = biomeType;
+		this.dimensionWhitelist = dimWhitelist;
 	}
 	
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) 
 	{
 		
-		if(random.nextInt(genFrequency) == 0){
-			int x = (chunkX * 16) + random.nextInt(16) + 8;
-			int z = (chunkZ * 16) + random.nextInt(16) + 8;
-			BlockPos pos = world.getHeight(new BlockPos(x, 0, z));
-			int y = pos.getY();
-
-			Biome biome = world.getBiomeForCoordsBody(new BlockPos(x,y,z));
-			BiomeDecorator decor = biome.decorator;
-//	    	boolean doGen = TerrainGen.decorate(world, random, pos, Decorate.EventType.TREE);
-			if(spawnBiome != null)
-			{
-				if(biome == spawnBiome)
+		if(isValidDim(world.provider.getDimension()))
+		{
+			if(random.nextInt(genFrequency) == 0){
+				int x = (chunkX * 16) + random.nextInt(16) + 8;
+				int z = (chunkZ * 16) + random.nextInt(16) + 8;
+				BlockPos pos = world.getHeight(new BlockPos(x, 0, z));
+				int y = pos.getY();
+				Biome biome = world.getBiomeForCoordsBody(new BlockPos(x,y,z));
+				BiomeDecorator decor = biome.decorator;
+	//	    	boolean doGen = TerrainGen.decorate(world, random, pos, Decorate.EventType.TREE);
+				if(spawnBiome != null)
+				{
+					if(biome == spawnBiome)
+					{
+						tree.generate(world, random, pos);
+					}
+				}
+				else if(spawnBiomeType != null)	
+				{
+					if(BiomeDictionary.hasType(biome, spawnBiomeType))
+					{
+						tree.generate(world, random, pos);
+					}
+				}
+				else if(decor.treesPerChunk > 0)
 				{
 					tree.generate(world, random, pos);
 				}
 			}
-			else if(spawnBiomeType != null)	
+		}
+	}
+	
+	private boolean isValidDim(int currentDim)
+	{
+		if(dimensionWhitelist == null)
+		{
+			return true;
+		}
+		else
+		{
+			for(int validDim: dimensionWhitelist)
 			{
-				if(BiomeDictionary.hasType(biome, spawnBiomeType))
-				{
-					tree.generate(world, random, pos);
-				}
+				if(validDim == currentDim)
+					return true;
 			}
-			else if(decor.treesPerChunk > 0)
-			{
-				tree.generate(world, random, pos);
-			}
+			return false;
 		}
 	}
 
