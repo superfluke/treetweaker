@@ -43,7 +43,7 @@ public class TreeGenMushroom extends WorldGenAbstractTree
                     k = 0;
                 }
 
-                BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+                BlockPos.MutableBlockPos mutableblockpos = new BlockPos.MutableBlockPos();
 
                 for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l)
                 {
@@ -51,9 +51,9 @@ public class TreeGenMushroom extends WorldGenAbstractTree
                     {
                         if (j >= 0 && j < 256)
                         {
-                            IBlockState state = worldIn.getBlockState(blockpos$mutableblockpos.setPos(l, j, i1));
+                            IBlockState state = worldIn.getBlockState(mutableblockpos.setPos(l, j, i1));
 
-                            if (!state.getBlock().isAir(state, worldIn, blockpos$mutableblockpos) && !state.getBlock().isLeaves(state, worldIn, blockpos$mutableblockpos))
+                            if (!state.getBlock().isAir(state, worldIn, mutableblockpos) && !state.getBlock().isLeaves(state, worldIn, mutableblockpos))
                             {
                                 flag = false;
                             }
@@ -72,11 +72,22 @@ public class TreeGenMushroom extends WorldGenAbstractTree
             }
             else
             {
-                Block block1 = worldIn.getBlockState(position.down()).getBlock();
-
-                if (block1 != Blocks.DIRT && block1 != Blocks.GRASS && block1 != Blocks.MYCELIUM)
+            	IBlockState basestate = worldIn.getBlockState(position.down());
+                Block block1 = basestate.getBlock();
+                boolean isValidBase;
+                
+                if(treeInfo.validBaseBlock != null)
                 {
-                    return false;
+                	isValidBase = (treeInfo.validBaseBlock == basestate);
+                }
+                else
+                {
+                	isValidBase = (block1 == Blocks.DIRT || block1 == Blocks.GRASS || block1 == Blocks.MYCELIUM);
+                }
+                
+                if(!isValidBase)
+                {
+                	return false;
                 }
                 else
                 {
@@ -131,54 +142,6 @@ public class TreeGenMushroom extends WorldGenAbstractTree
                                 }
 
                                 BlockHugeMushroom.EnumType enumtype = BlockHugeMushroom.EnumType.byMetadata(j2);
-
-//                                if (block == Blocks.BROWN_MUSHROOM_BLOCK || l2 < position.getY() + treeheight)
-//                                {
-//                                    if ((l1 == k3 || l1 == l3) && (i2 == j1 || i2 == k1))
-//                                    {
-//                                        continue;
-//                                    }
-//
-//                                    if (l1 == position.getX() - (j3 - 1) && i2 == j1)
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.NORTH_WEST;
-//                                    }
-//
-//                                    if (l1 == k3 && i2 == position.getZ() - (j3 - 1))
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.NORTH_WEST;
-//                                    }
-//
-//                                    if (l1 == position.getX() + (j3 - 1) && i2 == j1)
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.NORTH_EAST;
-//                                    }
-//
-//                                    if (l1 == l3 && i2 == position.getZ() - (j3 - 1))
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.NORTH_EAST;
-//                                    }
-//
-//                                    if (l1 == position.getX() - (j3 - 1) && i2 == k1)
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.SOUTH_WEST;
-//                                    }
-//
-//                                    if (l1 == k3 && i2 == position.getZ() + (j3 - 1))
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.SOUTH_WEST;
-//                                    }
-//
-//                                    if (l1 == position.getX() + (j3 - 1) && i2 == k1)
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.SOUTH_EAST;
-//                                    }
-//
-//                                    if (l1 == l3 && i2 == position.getZ() + (j3 - 1))
-//                                    {
-//                                        enumtype = BlockHugeMushroom.EnumType.SOUTH_EAST;
-//                                    }
-//                                }
 
                                 if (enumtype == BlockHugeMushroom.EnumType.CENTER && l2 < position.getY() + treeheight)
                                 {

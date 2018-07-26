@@ -2,8 +2,13 @@ package fluke.treetweaker.world;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProviderHell;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -39,7 +44,16 @@ public class FlukeTreeGen implements IWorldGenerator
 			if(random.nextInt(genFrequency) == 0){
 				int x = (chunkX * 16) + random.nextInt(16) + 8;
 				int z = (chunkZ * 16) + random.nextInt(16) + 8;
-				BlockPos pos = world.getHeight(new BlockPos(x, 0, z));
+				BlockPos pos;
+				if(world.provider instanceof WorldProviderHell)
+				{
+					pos = getNetherPos(world, x, random.nextInt(65) + 20, z);
+				}
+				else
+				{
+					pos = world.getHeight(new BlockPos(x, 0, z));
+				}
+				
 				int y = pos.getY();
 				Biome biome = world.getBiomeForCoordsBody(new BlockPos(x,y,z));
 				BiomeDecorator decor = biome.decorator;
@@ -82,6 +96,41 @@ public class FlukeTreeGen implements IWorldGenerator
 			return false;
 		}
 	}
-
+	
+	BlockPos getNetherPos(World world, int x, int startY, int z)
+	{	
+		int y;
+		boolean foundAir = false;
+		
+		for(y = startY; y > 0; y--)
+		{
+			IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+			Block block = state.getBlock();
+			if(foundAir)
+			{
+				if (block == Blocks.NETHERRACK)
+					break;
+				else if (block == Blocks.SOUL_SAND)
+					break;
+				else if (block == Blocks.MAGMA)
+					break;
+				else if (block == Blocks.NETHER_BRICK)
+					break;
+				else if (block == Blocks.GLOWSTONE)
+					break;
+				
+				Material matty = state.getMaterial();
+				if(matty == Material.GROUND || matty == Material.GRASS || matty == Material.ROCK)
+					break;
+			}
+			else
+			{
+				if(block == Blocks.AIR)
+					foundAir = true;
+			}
+		}
+		
+		return new BlockPos(x, y+1, z);
+	}
 
 }
