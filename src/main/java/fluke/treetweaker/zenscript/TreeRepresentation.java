@@ -46,7 +46,10 @@ public class TreeRepresentation
 	@ZenProperty
 	public int generationFrequency;
 	@ZenProperty
+	public int generationAttempts;
+	@ZenProperty
 	public boolean extraThick;
+	
 	
 	private WorldGenAbstractTree tree;
 	
@@ -60,6 +63,7 @@ public class TreeRepresentation
 		this.treeType = TreeType.DEFAULT;
 		this.generationWeight = 2;
 		this.generationFrequency = 5;
+		this.generationAttempts = 1;
 		this.spawnBiome = null;
 		this.validBaseBlock = null;
 		this.spawnBiomeType = null;
@@ -121,7 +125,7 @@ public class TreeRepresentation
 		}
 		extraTreeHeight += 1; //so rand function doesnt break if extra height is 0 and so the extra height generates from 0-num inclusive
 		CraftTweakerAPI.logInfo("Adding " + this.treeType.toString() + " tree '" + this.treeName + "' to world gen");
-		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType, dimensionWhitelist), generationWeight);
+		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType, dimensionWhitelist, generationAttempts), generationWeight);
 	}
 	
 	@ZenMethod
@@ -186,6 +190,19 @@ public class TreeRepresentation
 		else
 		{
 			CraftTweakerAPI.logWarning("generationFrequency must be > 0 for tree "  + this.treeName);
+		}
+	}
+	
+	@ZenMethod
+	public void setGenAttempts(int genAttempts)
+	{
+		if(genAttempts > 0)
+		{
+			this.generationAttempts = genAttempts;
+		}
+		else
+		{
+			CraftTweakerAPI.logWarning("generationAttempts must be > 0 for tree "  + this.treeName);
 		}
 	}
 	

@@ -25,14 +25,18 @@ public class FlukeTreeGen implements IWorldGenerator
 	private Biome spawnBiome;
 	private BiomeDictionary.Type spawnBiomeType;
 	private int[] dimensionWhitelist;
+	private int generationAttempts;
 	
-	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType, int[] dimWhitelist)
+	private static Random treeRand = new Random(8008135);
+	
+	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType, int[] dimWhitelist, int genAttempts)
 	{
 		this.tree = tree;
 		this.genFrequency = frequency;
 		this.spawnBiome = biome;
 		this.spawnBiomeType = biomeType;
 		this.dimensionWhitelist = dimWhitelist;
+		this.generationAttempts = genAttempts;
 	}
 	
 	@Override
@@ -41,40 +45,43 @@ public class FlukeTreeGen implements IWorldGenerator
 		
 		if(isValidDim(world.provider.getDimension()))
 		{
-			if(random.nextInt(genFrequency) == 0){
-				int x = (chunkX * 16) + random.nextInt(16) + 8;
-				int z = (chunkZ * 16) + random.nextInt(16) + 8;
-				BlockPos pos;
-				if(world.provider instanceof WorldProviderHell)
+			if(treeRand.nextInt(genFrequency) == 0){
+				for(int attempts = 0; attempts < generationAttempts; attempts++)
 				{
-					pos = getNetherPos(world, x, random.nextInt(65) + 20, z);
-				}
-				else
-				{
-					pos = world.getHeight(new BlockPos(x, 0, z));
-				}
-				
-				int y = pos.getY();
-				Biome biome = world.getBiomeForCoordsBody(new BlockPos(x,y,z));
-				BiomeDecorator decor = biome.decorator;
-	//	    	boolean doGen = TerrainGen.decorate(world, random, pos, Decorate.EventType.TREE);
-				if(spawnBiome != null)
-				{
-					if(biome == spawnBiome)
+					int x = (chunkX * 16) + treeRand.nextInt(16) + 8;
+					int z = (chunkZ * 16) + treeRand.nextInt(16) + 8;
+					BlockPos pos;
+					if(world.provider instanceof WorldProviderHell)
+					{
+						pos = getNetherPos(world, x, treeRand.nextInt(65) + 20, z);
+					}
+					else
+					{
+						pos = world.getHeight(new BlockPos(x, 0, z));
+					}
+					
+					int y = pos.getY();
+					Biome biome = world.getBiomeForCoordsBody(new BlockPos(x,y,z));
+					BiomeDecorator decor = biome.decorator;
+		//	    	boolean doGen = TerrainGen.decorate(world, random, pos, Decorate.EventType.TREE);
+					if(spawnBiome != null)
+					{
+						if(biome == spawnBiome)
+						{
+							tree.generate(world, random, pos);
+						}
+					}
+					else if(spawnBiomeType != null)	
+					{
+						if(BiomeDictionary.hasType(biome, spawnBiomeType))
+						{
+							tree.generate(world, random, pos);
+						}
+					}
+					else if(decor.treesPerChunk > 0)
 					{
 						tree.generate(world, random, pos);
 					}
-				}
-				else if(spawnBiomeType != null)	
-				{
-					if(BiomeDictionary.hasType(biome, spawnBiomeType))
-					{
-						tree.generate(world, random, pos);
-					}
-				}
-				else if(decor.treesPerChunk > 0)
-				{
-					tree.generate(world, random, pos);
 				}
 			}
 		}
