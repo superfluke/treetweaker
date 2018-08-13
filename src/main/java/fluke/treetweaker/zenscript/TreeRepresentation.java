@@ -6,6 +6,7 @@ import crafttweaker.mc1120.block.MCBlockDefinition;
 import crafttweaker.mc1120.block.MCItemBlock;
 import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.world.treegen.TreeGenAcacia;
+import fluke.treetweaker.world.treegen.TreeGenBraided;
 import fluke.treetweaker.world.treegen.TreeGenCanopy;
 import fluke.treetweaker.world.treegen.TreeGenJungle;
 import fluke.treetweaker.world.treegen.TreeGenLargeOak;
@@ -28,7 +29,7 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class TreeRepresentation 
 {
-	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, DEFAULT}
+	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, DEFAULT}
 	public String treeName;
 	public IBlockState log;
 	public IBlockState leaf;
@@ -47,6 +48,8 @@ public class TreeRepresentation
 	public int generationFrequency;
 	@ZenProperty
 	public boolean extraThick;
+	@ZenProperty
+	public boolean restrictSpawnRange;
 	
 	private WorldGenAbstractTree tree;
 	
@@ -60,6 +63,7 @@ public class TreeRepresentation
 		this.treeType = TreeType.DEFAULT;
 		this.generationWeight = 2;
 		this.generationFrequency = 5;
+		this.restrictSpawnRange = false;
 		this.spawnBiome = null;
 		this.validBaseBlock = null;
 		this.spawnBiomeType = null;
@@ -110,6 +114,10 @@ public class TreeRepresentation
 			case ACACIA:
 				this.tree = new TreeGenAcacia(this);
 				break;
+			case BRAIDED:
+				this.restrictSpawnRange = true;
+				this.tree = new TreeGenBraided(this);
+				break;
 			case RED_MUSHROOM:
 				//fall through
 			case BROWN_MUSHROOM:
@@ -121,7 +129,7 @@ public class TreeRepresentation
 		}
 		extraTreeHeight += 1; //so rand function doesnt break if extra height is 0 and so the extra height generates from 0-num inclusive
 		CraftTweakerAPI.logInfo("Adding " + this.treeType.toString() + " tree '" + this.treeName + "' to world gen");
-		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType, dimensionWhitelist), generationWeight);
+		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType, dimensionWhitelist, restrictSpawnRange), generationWeight);
 	}
 	
 	@ZenMethod

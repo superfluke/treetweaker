@@ -25,14 +25,19 @@ public class FlukeTreeGen implements IWorldGenerator
 	private Biome spawnBiome;
 	private BiomeDictionary.Type spawnBiomeType;
 	private int[] dimensionWhitelist;
+	private int spawnRange;
 	
-	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType, int[] dimWhitelist)
+	public FlukeTreeGen(WorldGenAbstractTree tree, int frequency, Biome biome, BiomeDictionary.Type biomeType, int[] dimWhitelist, boolean restrictSpawnRange)
 	{
 		this.tree = tree;
 		this.genFrequency = frequency;
 		this.spawnBiome = biome;
 		this.spawnBiomeType = biomeType;
 		this.dimensionWhitelist = dimWhitelist;
+		if(restrictSpawnRange)
+			spawnRange = 6;
+		else
+			spawnRange = 16;
 	}
 	
 	@Override
@@ -42,8 +47,8 @@ public class FlukeTreeGen implements IWorldGenerator
 		if(isValidDim(world.provider.getDimension()))
 		{
 			if(random.nextInt(genFrequency) == 0){
-				int x = (chunkX * 16) + random.nextInt(16) + 8;
-				int z = (chunkZ * 16) + random.nextInt(16) + 8;
+				int x = (chunkX * 16) + random.nextInt(spawnRange) + 8;
+				int z = (chunkZ * 16) + random.nextInt(spawnRange) + 8;
 				BlockPos pos;
 				if(world.provider instanceof WorldProviderHell)
 				{
