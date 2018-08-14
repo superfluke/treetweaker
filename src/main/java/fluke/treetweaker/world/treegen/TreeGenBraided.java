@@ -39,6 +39,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
     	treeInfo = tree;
     }
 	
+	//array of cos/sin values used to offset the trunk location, causing the swirl effect
 	protected static void init_array()
 	{
 		double[] scos = new double[40];
@@ -62,7 +63,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 		int trunkHeight = swirlHeight + taperHeight;
 		int treeHeight = swirlHeight+taperHeight+capHeight;
 		int period = treeHeight;
-		int swirlSize = 2 + (trunkHeight/10);
+		int swirlSize = 2 + (trunkHeight/10); //typically between 4-6. Controls how wide the braid is
 		if (swirlSize < 4) 
 			swirlSize = 4;
 		int swirlSizePlus = swirlSize + 1;
@@ -117,7 +118,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 				}
 			}
 			
-			
+			//start at -3 to account for roots slightly lower than starting position
 			for(int treeY = -3; treeY < treeHeight; treeY++) //trunk
 			{
 				if(treeY < trunkHeight)
@@ -137,6 +138,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 					int tree3X = (int) (swirlCOS[(40+treeY+26)%40] * swirlSizePlus + 0.5);
 					int tree3Z = (int) (swirlSIN[(40+treeY+26)%40] * swirlSize + 0.5);
 					
+					//draw a cross shape of logs
 					for(int x = -1; x <= 1; x++)
 					{
 						for(int z = -1; z <= 1; z++)
@@ -179,10 +181,8 @@ public class TreeGenBraided extends WorldGenAbstractTree
 					}
 				}
 			}
-
 			
-			
-			
+			//make the canopy
 			drawQuadBezierSkeleton(worldIn, position.add(0, treeHeight, 0), radius, length);
 			return true;
         }
@@ -253,6 +253,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
     }
 	
 	//will return null Pos for roots where no valid position is found
+	//otherwise will return 3 positions the roots should be placed at
 	protected BlockPos[] getRootHeights(World world, BlockPos treeCenter, int swirlSize, int swirlSizePlus)
 	{
 		BlockPos[] rootPos = new BlockPos[3];
@@ -364,7 +365,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 	
 	protected void drawLogandLeaf(World world, BlockPos position)
 	{
-		
+		//draw a cross shape, radius of 2
 		for(int x = -2; x <= 2; x++)
 		{
 			for(int z = -2; z <= 2; z++)
@@ -372,7 +373,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 				if(Math.abs(x)+Math.abs(z) > 2)
 					continue;
 				
-				//place log in middle of cross of radius 2
+				//place log in middle of cross
 				if(x == 0 && z == 0)
 				{
 					placeLogAt(world, position);
@@ -388,16 +389,11 @@ public class TreeGenBraided extends WorldGenAbstractTree
 		placeLeafAt(world, position.add(0, 1, 0));
 		placeLeafAt(world, position.add(0, -1, 0));
 	}
+
 	
-	protected void drawQuadBezier(World world, BlockPos start, BlockPos curve, BlockPos end, IBlockState block) 
-	{
-		for (BlockPos pixel : getQuadBezierArray(start, curve, end)) 
-		{
-			this.setBlockAndNotifyAdequately(world, pixel, block);
-		}
-	}
-	
-	//100% black magic 
+	//100% black magic
+	//draws a line between start and end point, curving the line based on curvePoint location
+	//returns array of block positions of points on the final, curved line
 	protected BlockPos[] getQuadBezierArray(BlockPos start, BlockPos curvePoint, BlockPos end)
 	{  		
 		ArrayList<BlockPos> linePoints = new ArrayList<BlockPos>();
