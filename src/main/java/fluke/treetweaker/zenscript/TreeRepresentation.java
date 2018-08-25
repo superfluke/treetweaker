@@ -8,9 +8,12 @@ import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.world.treegen.TreeGenAcacia;
 import fluke.treetweaker.world.treegen.TreeGenBraided;
 import fluke.treetweaker.world.treegen.TreeGenCanopy;
+import fluke.treetweaker.world.treegen.TreeGenEuca;
 import fluke.treetweaker.world.treegen.TreeGenJungle;
+import fluke.treetweaker.world.treegen.TreeGenLargeCanopy;
 import fluke.treetweaker.world.treegen.TreeGenLargeOak;
 import fluke.treetweaker.world.treegen.TreeGenOak;
+import fluke.treetweaker.world.treegen.TreeGenPalm;
 import fluke.treetweaker.world.treegen.TreeGenPine;
 import fluke.treetweaker.world.treegen.TreeGenSpruce;
 import fluke.treetweaker.world.treegen.TreeGenLargePine;
@@ -29,7 +32,7 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class TreeRepresentation 
 {
-	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, DEFAULT}
+	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, DEFAULT}
 	public String treeName;
 	public IBlockState log;
 	public IBlockState leaf;
@@ -86,7 +89,16 @@ public class TreeRepresentation
 				this.tree = new TreeGenLargeOak(this);
 				break;
 			case CANOPY:
-				this.tree = new TreeGenCanopy(this);
+				if(extraThick)
+				{
+					this.treeType = TreeType.LARGE_CANOPY;
+					this.tree = new TreeGenLargeCanopy(this);
+				}
+				else
+					this.tree = new TreeGenCanopy(this);
+				break;
+			case LARGE_CANOPY:
+				this.tree = new TreeGenLargeCanopy(this);
 				break;
 			case JUNGLE:
 				this.tree = new TreeGenJungle(this);
@@ -121,6 +133,12 @@ public class TreeRepresentation
 			case BRAIDED:
 				this.restrictSpawnRange = true;
 				this.tree = new TreeGenBraided(this);
+				break;
+			case PALM:
+				this.tree = new TreeGenPalm(this);
+				break;
+			case EUCA:
+				this.tree = new TreeGenEuca(this);
 				break;
 			case RED_MUSHROOM:
 				//fall through
