@@ -66,8 +66,7 @@ public class FlukeTreeGen implements IWorldGenerator
 						pos = world.getHeight(new BlockPos(x, 0, z));
 					}
 					
-					int y = pos.getY();
-					Biome biome = world.getBiomeForCoordsBody(new BlockPos(x,y,z));
+					Biome biome = world.getBiomeForCoordsBody(pos);
 					BiomeDecorator decor = biome.decorator;
 		//	    	boolean doGen = TerrainGen.decorate(world, random, pos, Decorate.EventType.TREE);
 					if(spawnBiome != null)
@@ -92,6 +91,7 @@ public class FlukeTreeGen implements IWorldGenerator
 			}
 		}
 	}
+	
 	
 	private boolean isValidDim(int currentDim)
 	{
