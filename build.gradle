@@ -39,6 +39,8 @@ dependencies {
 	deobfCompile "CraftTweaker2:CraftTweaker2-API:4.1.6.467"
 	deobfCompile "CraftTweaker2:ZenScript:4.1.6.467"
 	
+	deobfCompile "com.teamacronymcoders.base:base:1.12.2-3.11.0-SNAPSHOT.174"
+	
 	compile fileTree(dir: 'libs', includes: ['*.jar']) 
 }
 

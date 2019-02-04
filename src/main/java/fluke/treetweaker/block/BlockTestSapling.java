@@ -1,7 +1,20 @@
 package fluke.treetweaker.block;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.teamacronymcoders.base.client.models.generator.IHasGeneratedModel;
+import com.teamacronymcoders.base.client.models.generator.generatedmodel.GeneratedModel;
+import com.teamacronymcoders.base.client.models.generator.generatedmodel.IGeneratedModel;
+import com.teamacronymcoders.base.client.models.generator.generatedmodel.ModelType;
+
+import fluke.treetweaker.TreeTweaker;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.properties.IProperty;
@@ -12,7 +25,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -23,10 +35,8 @@ import net.minecraft.world.gen.feature.WorldGenSavannaTree;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import fluke.treetweaker.TreeTweaker;
-import fluke.treetweaker.world.FlukeTreeGen;
 
-public class BlockTestSapling extends BlockBush implements IGrowable
+public class BlockTestSapling extends BlockBush implements IGrowable, IGeneratedModel, IHasGeneratedModel
 {
 	public static final String REG_NAME = "testsapling";
     public static final PropertyInteger STAGE = PropertyInteger.create("stage", 0, 1);
@@ -141,9 +151,57 @@ public class BlockTestSapling extends BlockBush implements IGrowable
     @SideOnly(Side.CLIENT)
     public void initModel() 
 	{
+    	/*
 		IStateMapper mappy = (new StateMap.Builder()).ignore(new IProperty[] { STAGE }).build();
 		ModelLoader.setCustomStateMapper(this, mappy);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        */
 	}
+
+	@Override
+	public String getName() {
+		return REG_NAME;
+	}
+
+	@Override
+	public ModelType getModelType() {
+		return ModelType.BLOCKSTATE;
+	}
+
+	@Override
+	public String getJson() {
+		BufferedReader readIn = null;
+		try {
+			readIn = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
+				      .getResourceAsStream("assets/treetweaker/templates/block.txt"), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(readIn.toString());
+		return readIn.toString();
+	}
+	
+	@Override
+    public List<IGeneratedModel> getGeneratedModels() {
+        List<IGeneratedModel> models = Lists.newArrayList();
+
+        //TemplateFile templateFile;
+        //Map<String, String> replacements = Maps.newHashMap();
+
+        //templateFile = TemplateManager.getTemplateFile("item_model_overlaid");
+        
+        //replacements.put("texture", "treetweaker:blocks/testsapling");
+        //replacements.put("texture_overlay", "base:items/record_color");
+
+
+        //templateFile.replaceContents(replacements);
+        String templateJson = getJson();
+        templateJson.replace("texture", "treetweaker:blocks/testsapling");
+        models.add(new GeneratedModel(TreeTweaker.MODID + ":" + REG_NAME, getModelType(),
+        		templateJson));
+
+        return models;
+    }
 
 }
