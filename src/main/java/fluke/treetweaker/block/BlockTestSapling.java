@@ -9,48 +9,57 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.teamacronymcoders.base.IBaseMod;
+import com.teamacronymcoders.base.blocks.IHasBlockStateMapper;
+import com.teamacronymcoders.base.blocks.IHasItemBlock;
+import com.teamacronymcoders.base.client.models.IHasModel;
 import com.teamacronymcoders.base.client.models.generator.IHasGeneratedModel;
 import com.teamacronymcoders.base.client.models.generator.generatedmodel.GeneratedModel;
 import com.teamacronymcoders.base.client.models.generator.generatedmodel.IGeneratedModel;
 import com.teamacronymcoders.base.client.models.generator.generatedmodel.ModelType;
+import com.teamacronymcoders.base.items.itemblocks.ItemBlockGeneric;
+import com.teamacronymcoders.base.items.itemblocks.ItemBlockModel;
 import com.teamacronymcoders.base.util.files.templates.TemplateFile;
 import com.teamacronymcoders.base.util.files.templates.TemplateManager;
 
 import fluke.treetweaker.TreeTweaker;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenSavannaTree;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockTestSapling extends BlockBush implements IGrowable, IGeneratedModel, IHasGeneratedModel
+public class BlockTestSapling extends BlockBush implements IGrowable, IHasGeneratedModel, IHasModel, IHasItemBlock, IHasBlockStateMapper //IGeneratedModel
 {
-	public static final String REG_NAME = "testsapling";
     public static final PropertyInteger STAGE = PropertyInteger.create("stage", 0, 1);
     protected static final AxisAlignedBB SAPLING_AABB = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
+    protected String name = "testsapling";
     protected WorldGenAbstractTree tree;
+    protected ItemBlock itemBlock;
+    private IBaseMod mod;
     
     public BlockTestSapling()
     {
         this.setDefaultState(this.blockState.getBaseState().withProperty(STAGE, Integer.valueOf(0)));
         this.setCreativeTab(CreativeTabs.DECORATIONS);
-        setUnlocalizedName(TreeTweaker.MODID + ".testsapling");
+        this.setTranslationKey(this.name);
         //setRegistryName(REG_NAME);
+        this.itemBlock = new ItemBlockModel<>(this);
+        
         
         this.tree = new WorldGenSavannaTree(false);
     }
@@ -159,30 +168,19 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IGenerated
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
         */
 	}
-
+    
+    /*
 	@Override
-	public String getName() {
-		return REG_NAME;
+	public String getName() 
+	{
+		return name;
 	}
 
 	@Override
-	public ModelType getModelType() {
+	*/
+	public ModelType getModelType() 
+	{
 		return ModelType.BLOCKSTATE;
-	}
-
-	@Override
-	public String getJson() {
-		BufferedReader readIn = null;
-		try {
-			readIn = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
-				      .getResourceAsStream("assets/treetweaker/templates/block.txt"), "UTF-8"));
-			System.out.println(readIn);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println(readIn.toString());
-		return readIn.toString();
 	}
 	
 	@Override
@@ -192,21 +190,48 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IGenerated
         TemplateFile templateFile;
         Map<String, String> replacements = Maps.newHashMap();
 
-        templateFile = TemplateManager.getTemplateFile("block");
+        templateFile = TemplateManager.getTemplateFile(new ResourceLocation(TreeTweaker.MODID, "block"));
         
         replacements.put("texture", "treetweaker:blocks/testsapling");
-        //replacements.put("texture_overlay", "base:items/record_color");
-
-
         templateFile.replaceContents(replacements);
-        //String templateJson = getJson();
-        //templateJson.replace("texture", "treetweaker:blocks/testsapling");
-        //models.add(new GeneratedModel(TreeTweaker.MODID + ":" + REG_NAME, getModelType(),
-        	//	templateJson));
-        models.add(new GeneratedModel(TreeTweaker.MODID + ":" + REG_NAME, getModelType(),
+
+        models.add(new GeneratedModel(name, getModelType(),
                 templateFile.getFileContents()));
 
         return models;
     }
+
+	
+	@Override
+	public Block getBlock() 
+	{
+		return this;
+	}
+
+	@Override
+	public Item getItem() 
+	{
+		return this.getItemBlock();
+	}
+
+	@Override
+	public IBaseMod getMod() 
+	{
+		return this.mod;
+	}
+
+	@Override
+	public void setMod(IBaseMod mod) 
+	{
+		this.mod = mod;
+	}
+	
+	
+	@Override
+	public ItemBlock getItemBlock() 
+	{
+		return itemBlock == null ? new ItemBlockGeneric<>(this) : itemBlock;
+	}
+	
 
 }

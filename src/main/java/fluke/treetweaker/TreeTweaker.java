@@ -1,5 +1,6 @@
 package fluke.treetweaker;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -40,7 +41,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	
 	public TreeTweaker()
 	{
-		super(MODID, NAME, VERSION, null, true);
+		super(MODID, NAME, VERSION, CreativeTabs.MISC, true);
 	}
 	
 	@EventHandler
