@@ -17,28 +17,28 @@ import fluke.treetweaker.TreeTweaker;
 public class ModBlocks 
 {
 	
-	@GameRegistry.ObjectHolder(BlockTestSapling.REG_NAME)
-    public static BlockTestSapling testSapling;
+	//@GameRegistry.ObjectHolder(BlockTestSapling.REG_NAME)
+    //public static BlockTestSapling testSapling;
 	
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) 
 	{
 		IForgeRegistry<Block> reggy = event.getRegistry();
-		reggy.register(new BlockTestSapling());
+		//reggy.register(new BlockTestSapling());
 	}
 	
 	@SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) 
 	{
 		IForgeRegistry<Item> reggy = event.getRegistry();
-		reggy.register(new ItemBlock(ModBlocks.testSapling).setRegistryName(ModBlocks.testSapling.getRegistryName()));
+		//reggy.register(new ItemBlock(ModBlocks.testSapling).setRegistryName(ModBlocks.testSapling.getRegistryName()));
 
 	}
 	
 	@SideOnly(Side.CLIENT)
     public static void initModels() 
 	{
-		testSapling.initModel();
+		//testSapling.initModel();
 	}
 
 }

@@ -13,6 +13,8 @@ import com.teamacronymcoders.base.client.models.generator.IHasGeneratedModel;
 import com.teamacronymcoders.base.client.models.generator.generatedmodel.GeneratedModel;
 import com.teamacronymcoders.base.client.models.generator.generatedmodel.IGeneratedModel;
 import com.teamacronymcoders.base.client.models.generator.generatedmodel.ModelType;
+import com.teamacronymcoders.base.util.files.templates.TemplateFile;
+import com.teamacronymcoders.base.util.files.templates.TemplateManager;
 
 import fluke.treetweaker.TreeTweaker;
 import net.minecraft.block.BlockBush;
@@ -48,7 +50,7 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IGenerated
         this.setDefaultState(this.blockState.getBaseState().withProperty(STAGE, Integer.valueOf(0)));
         this.setCreativeTab(CreativeTabs.DECORATIONS);
         setUnlocalizedName(TreeTweaker.MODID + ".testsapling");
-        setRegistryName(REG_NAME);
+        //setRegistryName(REG_NAME);
         
         this.tree = new WorldGenSavannaTree(false);
     }
@@ -174,6 +176,7 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IGenerated
 		try {
 			readIn = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
 				      .getResourceAsStream("assets/treetweaker/templates/block.txt"), "UTF-8"));
+			System.out.println(readIn);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -186,20 +189,22 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IGenerated
     public List<IGeneratedModel> getGeneratedModels() {
         List<IGeneratedModel> models = Lists.newArrayList();
 
-        //TemplateFile templateFile;
-        //Map<String, String> replacements = Maps.newHashMap();
+        TemplateFile templateFile;
+        Map<String, String> replacements = Maps.newHashMap();
 
-        //templateFile = TemplateManager.getTemplateFile("item_model_overlaid");
+        templateFile = TemplateManager.getTemplateFile("block");
         
-        //replacements.put("texture", "treetweaker:blocks/testsapling");
+        replacements.put("texture", "treetweaker:blocks/testsapling");
         //replacements.put("texture_overlay", "base:items/record_color");
 
 
-        //templateFile.replaceContents(replacements);
-        String templateJson = getJson();
-        templateJson.replace("texture", "treetweaker:blocks/testsapling");
+        templateFile.replaceContents(replacements);
+        //String templateJson = getJson();
+        //templateJson.replace("texture", "treetweaker:blocks/testsapling");
+        //models.add(new GeneratedModel(TreeTweaker.MODID + ":" + REG_NAME, getModelType(),
+        	//	templateJson));
         models.add(new GeneratedModel(TreeTweaker.MODID + ":" + REG_NAME, getModelType(),
-        		templateJson));
+                templateFile.getFileContents()));
 
         return models;
     }

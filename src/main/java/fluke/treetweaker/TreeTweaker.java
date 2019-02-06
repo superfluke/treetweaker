@@ -28,7 +28,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	public static final String MODID = "treetweaker";
 	public static final String NAME = "TreeTweaker";
 	public static final String VERSION = "1.6";
-	public static final String DEPENDS = "required-after:crafttweaker;";
+	public static final String DEPENDS = "required-after:crafttweaker;required-after:base";
 
 	@Instance(MODID)
 	public static TreeTweaker instance;
@@ -47,9 +47,11 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	public void preInit(FMLPreInitializationEvent event) 
 	{
 		super.preInit(event);
+		this.getRegistry(BlockRegistry.class, "BLOCK").register(new BlockTestSapling());
 		logger = event.getModLog();
 		proxy.init();
 		PluginCraftTweaker.init();
+		
 		
 	}
 
@@ -58,7 +60,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	{
 		super.init(event);
 //		GameRegistry.registerWorldGenerator(new FlukeTreeGen(), 2);
-		this.getRegistry(BlockRegistry.class, "BLOCK").register(new BlockTestSapling());
+		
 	}
 
 	@EventHandler
