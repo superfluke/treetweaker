@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.teamacronymcoders.base.IBaseMod;
@@ -232,6 +233,14 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
 	{
 		return itemBlock == null ? new ItemBlockGeneric<>(this) : itemBlock;
 	}
+	
+	@Override
+    public List<String> getModelNames(List<String> modelNames) {
+        if (!Strings.isNullOrEmpty(this.name)) {
+            modelNames.add(this.name);
+        }
+        return modelNames;
+    }
 	
 
 }
