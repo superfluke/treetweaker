@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.zenscript.PluginCraftTweaker;
+import fluke.treetweaker.zenscript.SaplingScriptParser;
 import fluke.treetweaker.block.BlockTestSapling;
 import fluke.treetweaker.proxy.CommonProxy;
 
@@ -52,7 +53,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 		logger = event.getModLog();
 		proxy.init();
 		PluginCraftTweaker.init();
-		
+		SaplingScriptParser.fetchScripts();
 		
 	}
 
