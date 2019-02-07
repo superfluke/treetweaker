@@ -10,16 +10,6 @@ public class CommonProxy
 {
 	public void init()
 	{
-//		MinecraftForge.TERRAIN_GEN_BUS.register(this);
 	}
-	
-	@SubscribeEvent
-	public void decorate(DecorateBiomeEvent.Decorate event) 
-	{
-		if(event.getType() == Decorate.EventType.TREE)
-		{
-//			System.out.println("fuck yo tree");
-			event.setResult(Result.DENY);
-		}
-	}
+
 }

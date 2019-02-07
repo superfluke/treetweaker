@@ -32,6 +32,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -48,17 +49,17 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
 {
     public static final PropertyInteger STAGE = PropertyInteger.create("stage", 0, 1);
     protected static final AxisAlignedBB SAPLING_AABB = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
-    protected String name = "testsapling";
+    protected String name;
     protected WorldGenAbstractTree tree;
     protected ItemBlock itemBlock;
     private IBaseMod mod;
     
-    public BlockTestSapling()
+    public BlockTestSapling(String name)
     {
         this.setDefaultState(this.blockState.getBaseState().withProperty(STAGE, Integer.valueOf(0)));
         this.setCreativeTab(CreativeTabs.DECORATIONS);
+        this.name = name.toLowerCase();
         this.setTranslationKey(this.name);
-        //setRegistryName(REG_NAME);
         this.itemBlock = new ItemBlockModel<>(this);
         
         
@@ -109,10 +110,14 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
         if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(world, rand, pos)) 
         	return;
         
-        //TODO dumbass sapling blocks the tree from growing
-        this.tree.generate(world, rand, pos.up().east());
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        boolean didGenerate = this.tree.generate(world, rand, pos);
+        
+        if(!didGenerate)
+        	world.setBlockState(pos, this.getDefaultState());
     }
     
+    //TODO add base block
 //    @Override
 //    protected boolean canSustainBush(IBlockState state)
 //    {
@@ -159,26 +164,7 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
     {
         this.grow(worldIn, pos, state, rand);
     }
-    
-    @SideOnly(Side.CLIENT)
-    public void initModel() 
-	{
-    	/*
-		IStateMapper mappy = (new StateMap.Builder()).ignore(new IProperty[] { STAGE }).build();
-		ModelLoader.setCustomStateMapper(this, mappy);
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-        */
-	}
-    
-    /*
-	@Override
-	public String getName() 
-	{
-		return name;
-	}
 
-	@Override
-	*/
 	public ModelType getModelType() 
 	{
 		return ModelType.BLOCKSTATE;
@@ -189,15 +175,23 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
         List<IGeneratedModel> models = Lists.newArrayList();
 
         TemplateFile templateFile;
-        Map<String, String> replacements = Maps.newHashMap();
-
         templateFile = TemplateManager.getTemplateFile(new ResourceLocation(TreeTweaker.MODID, "block"));
         
-        replacements.put("texture", "treetweaker:blocks/testsapling");
+        Map<String, String> replacements = Maps.newHashMap();
+        replacements.put("texture", "treetweaker:blocks/" + this.name);
+        replacements.put("model", "treetweaker:" + this.name);
         templateFile.replaceContents(replacements);
 
         models.add(new GeneratedModel(name, getModelType(),
                 templateFile.getFileContents()));
+        
+        TemplateFile templateFile2;
+        templateFile2 = TemplateManager.getTemplateFile(new ResourceLocation(TreeTweaker.MODID, "treemodel"));
+        
+        templateFile2.replaceContents(replacements);
+        
+        models.add(new GeneratedModel(name, ModelType.ITEM_MODEL,
+        		templateFile2.getFileContents()));
 
         return models;
     }

@@ -2,7 +2,7 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            "cross": "##TEXTURE##"
+            "cross": "treetweaker:blocks/testo"
         }
     },
     "variants": {
@@ -10,7 +10,7 @@
             "model": "tinted_cross"
         },
         "inventory": {
-            "model": "##MODEL##"
+            "model": "treetweaker:testo"
         }
     }
 }
