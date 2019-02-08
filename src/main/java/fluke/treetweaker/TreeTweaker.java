@@ -53,7 +53,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 		logger = event.getModLog();
 		proxy.init();
 		PluginCraftTweaker.init();
-		SaplingScriptParser.fetchScripts();
+		SaplingScriptParser.setupSaplings();
 		
 	}
 

@@ -39,30 +39,48 @@ import stanhebben.zenscript.statements.StatementVar;
 public class SaplingScriptParser 
 {
 	private static IScriptProvider scriptsGlobal;
+	public static Field statementVarName;
+	public static Field statementVarInitializer;
+	public static Field parsedExpressionCallReceiver;
+	public static Field parsedExpressionCallArguments;
+	public static Field parsedExpressionValue;
+	public static Field expressionStringValue;
+	public static Field parsedExpressionMemberValue;
+	public static Field parsedExpressionMember;
+	public static Field parsedExpressionVariableName;
 	
-	public static void fetchScripts()
+	public static void setupSaplings()
+	{
+		exposeThemAll();
+		parseScripts();
+		
+	}
+	
+	public static void exposeThemAll()
 	{
 		//This seems like a dumb idea, yet here we are
-		Field statementVarName = ReflectionHelper.findField(StatementVar.class, "name");
+		statementVarName = ReflectionHelper.findField(StatementVar.class, "name");
 		statementVarName.setAccessible(true);
-		Field statementVarInitializer = ReflectionHelper.findField(StatementVar.class, "initializer");
+		statementVarInitializer = ReflectionHelper.findField(StatementVar.class, "initializer");
 		statementVarInitializer.setAccessible(true);
-		Field parsedExpressionCallReceiver = ReflectionHelper.findField(ParsedExpressionCall.class, "receiver");
+		parsedExpressionCallReceiver = ReflectionHelper.findField(ParsedExpressionCall.class, "receiver");
 		parsedExpressionCallReceiver.setAccessible(true);
-		Field parsedExpressionCallArguments = ReflectionHelper.findField(ParsedExpressionCall.class, "arguments");
+		parsedExpressionCallArguments = ReflectionHelper.findField(ParsedExpressionCall.class, "arguments");
 		parsedExpressionCallArguments.setAccessible(true);
-		Field parsedExpressionValue = ReflectionHelper.findField(ParsedExpressionValue.class, "value");
+		parsedExpressionValue = ReflectionHelper.findField(ParsedExpressionValue.class, "value");
 		parsedExpressionValue.setAccessible(true);
-		Field expressionStringValue = ReflectionHelper.findField(ExpressionString.class, "value");
+		expressionStringValue = ReflectionHelper.findField(ExpressionString.class, "value");
 		expressionStringValue.setAccessible(true);
-		Field parsedExpressionMemberValue = ReflectionHelper.findField(ParsedExpressionMember.class, "value");
+		parsedExpressionMemberValue = ReflectionHelper.findField(ParsedExpressionMember.class, "value");
 		parsedExpressionMemberValue.setAccessible(true);
-		Field parsedExpressionMember = ReflectionHelper.findField(ParsedExpressionMember.class, "member");
+		parsedExpressionMember = ReflectionHelper.findField(ParsedExpressionMember.class, "member");
 		parsedExpressionMember.setAccessible(true);
-		Field parsedExpressionVariableName = ReflectionHelper.findField(ParsedExpressionVariable.class, "name");
+		parsedExpressionVariableName = ReflectionHelper.findField(ParsedExpressionVariable.class, "name");
 		parsedExpressionVariableName.setAccessible(true);
-		
-		
+	}
+	
+	public static List<ScriptFile> fetchScriptFiles()
+	{
 		File globalDir = new File("scripts");
 		scriptsGlobal = new ScriptProviderDirectory(globalDir);
 		IScriptProvider cascaded = new ScriptProviderCascade(scriptsGlobal);
@@ -85,7 +103,12 @@ public class SaplingScriptParser
                 }
             }
         }
-        
+        return fileList;
+	}
+	
+	public static void parseScripts()
+	{
+		List<ScriptFile> fileList = fetchScriptFiles();
         Map<String, byte[]> classes = new HashMap<>();
         IEnvironmentGlobal environmentGlobal = GlobalRegistry.makeGlobalEnvironment(classes);//pls dont break loader.getMainName());
         for(ScriptFile scriptFile : fileList) 
