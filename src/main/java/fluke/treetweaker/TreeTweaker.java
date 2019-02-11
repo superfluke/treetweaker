@@ -1,27 +1,22 @@
 package fluke.treetweaker;
 
+import org.apache.logging.log4j.Logger;
+
+import com.teamacronymcoders.base.BaseModFoundation;
+
+import crafttweaker.CraftTweakerAPI;
+import fluke.treetweaker.proxy.CommonProxy;
+import fluke.treetweaker.zenscript.PluginCraftTweaker;
+import fluke.treetweaker.zenscript.TreeRegistrar;
+import fluke.treetweaker.zenscript.TreeRepresentation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import com.teamacronymcoders.base.BaseModFoundation;
-import com.teamacronymcoders.base.registrysystem.BlockRegistry;
-
-import org.apache.logging.log4j.Logger;
-
-import fluke.treetweaker.world.FlukeTreeGen;
-import fluke.treetweaker.zenscript.PluginCraftTweaker;
-import fluke.treetweaker.zenscript.SaplingScriptParser;
-import fluke.treetweaker.block.BlockTestSapling;
-import fluke.treetweaker.proxy.CommonProxy;
 
 @Mod(modid = TreeTweaker.MODID, name = TreeTweaker.NAME, version = TreeTweaker.VERSION, dependencies = TreeTweaker.DEPENDS)
 public class TreeTweaker extends BaseModFoundation<TreeTweaker> 
@@ -43,17 +38,20 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	public TreeTweaker()
 	{
 		super(MODID, NAME, VERSION, CreativeTabs.MISC, true);
+		PluginCraftTweaker.init();
 	}
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
 	{
 		super.preInit(event);
-		this.getRegistry(BlockRegistry.class, "BLOCK").register(new BlockTestSapling("testo"));
 		logger = event.getModLog();
 		proxy.init();
-		PluginCraftTweaker.init();
-		SaplingScriptParser.setupSaplings();
+		System.out.println("hi I'm preinit");
+		CraftTweakerAPI.logWarning("hi I'm preinit");
+
+		//PluginCraftTweaker.init();
+		TreeRegistrar.registerSaplings();
 		
 	}
 
@@ -61,6 +59,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	public void init(FMLInitializationEvent event) 
 	{
 		super.init(event);
+		TreeRegistrar.registerTrees();
 		
 	}
 

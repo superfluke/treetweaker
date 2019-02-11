@@ -1,8 +1,5 @@
 package fluke.treetweaker.block;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -24,6 +21,7 @@ import com.teamacronymcoders.base.util.files.templates.TemplateFile;
 import com.teamacronymcoders.base.util.files.templates.TemplateManager;
 
 import fluke.treetweaker.TreeTweaker;
+import fluke.treetweaker.zenscript.TreeRepresentation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
@@ -42,28 +40,24 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenSavannaTree;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockTestSapling extends BlockBush implements IGrowable, IHasGeneratedModel, IHasModel, IHasItemBlock, IHasBlockStateMapper //IGeneratedModel
 {
     public static final PropertyInteger STAGE = PropertyInteger.create("stage", 0, 1);
     protected static final AxisAlignedBB SAPLING_AABB = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
-    protected String name;
+    public String name;
     protected WorldGenAbstractTree tree;
     protected ItemBlock itemBlock;
     private IBaseMod mod;
     
-    public BlockTestSapling(String name)
+    public BlockTestSapling(TreeRepresentation treeRep)
     {
         this.setDefaultState(this.blockState.getBaseState().withProperty(STAGE, Integer.valueOf(0)));
         this.setCreativeTab(CreativeTabs.DECORATIONS);
-        this.name = name.toLowerCase();
+        this.name = treeRep.treeName.toLowerCase();
         this.setTranslationKey(this.name);
         this.itemBlock = new ItemBlockModel<>(this);
-        
-        
-        this.tree = new WorldGenSavannaTree(false);
+        this.tree = treeRep.tree;
     }
     
     public void setTreeInfo(WorldGenAbstractTree mrTree)

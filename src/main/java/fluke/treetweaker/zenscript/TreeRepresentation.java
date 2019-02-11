@@ -1,9 +1,16 @@
 package fluke.treetweaker.zenscript;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.teamacronymcoders.base.registrysystem.BlockRegistry;
+
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.api.block.IBlock;
 import crafttweaker.mc1120.block.MCBlockDefinition;
 import crafttweaker.mc1120.block.MCItemBlock;
+import fluke.treetweaker.TreeTweaker;
+import fluke.treetweaker.block.BlockTestSapling;
 import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.world.treegen.TreeGenAcacia;
 import fluke.treetweaker.world.treegen.TreeGenBraided;
@@ -42,6 +49,10 @@ public class TreeRepresentation
 	public Biome spawnBiome;
 	public BiomeDictionary.Type spawnBiomeType;
 	public int[] dimensionWhitelist;
+	public boolean registerSapling = false;
+	private String logString;
+	private String leafString;
+	private String baseBlockString;
 	
 	@ZenProperty
 	public int minTreeHeight;
@@ -57,7 +68,8 @@ public class TreeRepresentation
 	public boolean restrictSpawnRange;
 	
 	
-	private WorldGenAbstractTree tree;
+	public WorldGenAbstractTree tree;
+	
 	
 	public TreeRepresentation(String name)
 	{
@@ -150,21 +162,19 @@ public class TreeRepresentation
 				this.tree = new TreeGenOak(this);
 		}
 		extraTreeHeight += 1; //so rand function doesnt break if extra height is 0 and so the extra height generates from 0-num inclusive
-		CraftTweakerAPI.logInfo("Adding " + this.treeType.toString() + " tree '" + this.treeName + "' to world gen");
-		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType, dimensionWhitelist, generationAttempts, restrictSpawnRange), generationWeight);
-		
+		TreeRegistrar.treesToRegister.add(this);
 	}
 	
 	@ZenMethod
 	public void setLog(String logBlock)
 	{
-		this.log =  getStateFromString(logBlock);
+		this.logString = logBlock;
 	}
 	
 	@ZenMethod
 	public void setLeaf(String leafBlock)
 	{
-		this.leaf = getStateFromString(leafBlock);
+		this.leafString = leafBlock;
 	}
 	
 	@ZenMethod
@@ -246,7 +256,7 @@ public class TreeRepresentation
 	@ZenMethod
 	public void setBaseBlock(String block)
 	{
-		this.validBaseBlock = getStateFromString(block);
+		this.baseBlockString = block;
 	}
 	
 	@ZenMethod
@@ -267,8 +277,28 @@ public class TreeRepresentation
 		this.dimensionWhitelist = new int[] {dim};
 	}
 	
+	@ZenMethod
+	public void addSapling()
+	{
+		//TreeRegistrar.saplingsToRegister.add(new BlockTestSapling(this.treeName));
+		this.registerSapling = true;
+	}
+	
+	
+	
+	public void setTreeBlocksFromString()
+	{
+		if(this.logString != null)
+			this.log =  getStateFromString(this.logString);
+		if(this.leafString != null)
+			this.leaf = getStateFromString(this.leafString);
+		if(this.validBaseBlock != null)
+			this.validBaseBlock = getStateFromString(this.baseBlockString);
+	}
+	
 	private IBlockState getStateFromString(String block)
 	{
+		
 		String[] splitty = block.split(":");
 		Block blocky;
 		if(splitty.length > 2)
