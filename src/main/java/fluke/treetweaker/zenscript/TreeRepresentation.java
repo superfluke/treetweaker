@@ -11,6 +11,7 @@ import crafttweaker.mc1120.block.MCBlockDefinition;
 import crafttweaker.mc1120.block.MCItemBlock;
 import fluke.treetweaker.TreeTweaker;
 import fluke.treetweaker.block.BlockTestSapling;
+import fluke.treetweaker.util.BlockUtil;
 import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.world.treegen.TreeGenAcacia;
 import fluke.treetweaker.world.treegen.TreeGenBraided;
@@ -23,6 +24,7 @@ import fluke.treetweaker.world.treegen.TreeGenOak;
 import fluke.treetweaker.world.treegen.TreeGenPalm;
 import fluke.treetweaker.world.treegen.TreeGenPine;
 import fluke.treetweaker.world.treegen.TreeGenSpruce;
+import fluke.treetweaker.world.treegen.TreeGenStygian;
 import fluke.treetweaker.world.treegen.TreeGenLargePine;
 import fluke.treetweaker.world.treegen.TreeGenLargeSpruce;
 import fluke.treetweaker.world.treegen.TreeGenMushroom;
@@ -39,7 +41,7 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public class TreeRepresentation 
 {
-	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, DEFAULT}
+	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, STYGIAN, DEFAULT}
 	public String treeName;
 	public IBlockState log;
 	public IBlockState leaf;
@@ -50,9 +52,9 @@ public class TreeRepresentation
 	public BiomeDictionary.Type spawnBiomeType;
 	public int[] dimensionWhitelist;
 	public boolean registerSapling = false;
-	private String logString;
-	private String leafString;
-	private String baseBlockString;
+	public String logString;
+	public String leafString;
+	public String baseBlockString;
 	
 	@ZenProperty
 	public int minTreeHeight;
@@ -89,6 +91,8 @@ public class TreeRepresentation
 		this.dimensionWhitelist = null;
 	}
 	
+	//TODO assigning trees to early. should be delayed to init. causes problems with WorldGenHugeTree leaves
+	//or override growLeavesLayerStrict to not use a the Final leavesMetadata
 	@ZenMethod
 	public void register() 
 	{
@@ -156,6 +160,9 @@ public class TreeRepresentation
 				//fall through
 			case BROWN_MUSHROOM:
 				this.tree = new TreeGenMushroom(this);
+				break;
+			case STYGIAN:
+				this.tree = new TreeGenStygian(this);
 				break;
 			default:
 				CraftTweakerAPI.logWarning("Unknown tree type. Tree " + this.treeName + " defaulting to OAK");
@@ -280,7 +287,9 @@ public class TreeRepresentation
 	@ZenMethod
 	public void addSapling()
 	{
-		//TreeRegistrar.saplingsToRegister.add(new BlockTestSapling(this.treeName));
+		if(TreeTweaker.preInitDone)
+			CraftTweakerAPI.logWarning("Failed to register sapling. TreeTweaker script must include #loader preinit");
+
 		this.registerSapling = true;
 	}
 	
@@ -288,38 +297,37 @@ public class TreeRepresentation
 	
 	public void setTreeBlocksFromString()
 	{
+		IBlockState state;
+		IBlockState dirt = Blocks.DIRT.getDefaultState();
 		if(this.logString != null)
-			this.log =  getStateFromString(this.logString);
-		if(this.leafString != null)
-			this.leaf = getStateFromString(this.leafString);
-		if(this.validBaseBlock != null)
-			this.validBaseBlock = getStateFromString(this.baseBlockString);
-	}
-	
-	private IBlockState getStateFromString(String block)
-	{
-		
-		String[] splitty = block.split(":");
-		Block blocky;
-		if(splitty.length > 2)
 		{
-			blocky = Block.getBlockFromName(splitty[0] + ":" + splitty[1]);
-			if(blocky == null)
+			state = BlockUtil.getStateFromString(this.logString);
+			if(state == null)
 			{
-				CraftTweakerAPI.logWarning("Could not find block " + block + " for tree " + this.treeName + ". Defaulting to minecraft:dirt");
-				return Blocks.DIRT.getDefaultState();
+				CraftTweakerAPI.logWarning("Could not find block " + this.logString + " for tree " + this.treeName + " log. Defaulting to minecraft:dirt");
+				state = dirt;
 			}
-			return blocky.getStateFromMeta(Integer.valueOf(splitty[2]));
+			this.log =  state;
 		}
-		else
+		if(this.leafString != null)
 		{
-			blocky = Block.getBlockFromName(block);
-			if(blocky == null)
+			state = BlockUtil.getStateFromString(this.leafString);
+			if(state == null)
 			{
-				CraftTweakerAPI.logWarning("Could not find block " + block + " for tree " + this.treeName + ". Defaulting to minecraft:dirt");
-				return Blocks.DIRT.getDefaultState();
+				CraftTweakerAPI.logWarning("Could not find block " + this.leafString + " for tree " + this.treeName + " leaf. Defaulting to minecraft:dirt");
+				state = dirt;
 			}
-			return blocky.getDefaultState();
+			this.leaf = state;
+		}
+		if(this.baseBlockString != null)
+		{
+			state = BlockUtil.getStateFromString(this.baseBlockString);
+			if(state == null)
+			{
+				CraftTweakerAPI.logWarning("Could not find block " + this.baseBlockString + " for tree " + this.treeName + " base-block. Defaulting to minecraft:dirt");
+				state = dirt;
+			}
+			this.validBaseBlock = state;
 		}
 	}
 }

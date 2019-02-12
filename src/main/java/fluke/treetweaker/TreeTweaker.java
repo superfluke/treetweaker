@@ -34,6 +34,7 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	public static CommonProxy proxy;
 
 	public static Logger logger;
+	public static boolean preInitDone = false;
 	
 	public TreeTweaker()
 	{
@@ -47,12 +48,10 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 		super.preInit(event);
 		logger = event.getModLog();
 		proxy.init();
-		System.out.println("hi I'm preinit");
-		CraftTweakerAPI.logWarning("hi I'm preinit");
 
 		//PluginCraftTweaker.init();
 		TreeRegistrar.registerSaplings();
-		
+		preInitDone = true;
 	}
 
 	@EventHandler

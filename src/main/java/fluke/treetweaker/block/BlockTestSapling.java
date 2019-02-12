@@ -21,6 +21,7 @@ import com.teamacronymcoders.base.util.files.templates.TemplateFile;
 import com.teamacronymcoders.base.util.files.templates.TemplateManager;
 
 import fluke.treetweaker.TreeTweaker;
+import fluke.treetweaker.util.BlockUtil;
 import fluke.treetweaker.zenscript.TreeRepresentation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
@@ -49,6 +50,8 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
     protected WorldGenAbstractTree tree;
     protected ItemBlock itemBlock;
     protected Block soilBlock;
+    protected String soilBlockString;
+    protected boolean hasCustomSoilBlock = false;
     private IBaseMod mod;
     
     public BlockTestSapling(TreeRepresentation treeRep)
@@ -59,13 +62,22 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
         this.setTranslationKey(this.name);
         this.itemBlock = new ItemBlockModel<>(this);
         this.tree = treeRep.tree;
-        if(treeRep.validBaseBlock != null)
-        	this.soilBlock = treeRep.validBaseBlock.getBlock();
+        if(treeRep.baseBlockString != null)
+        {
+        	this.hasCustomSoilBlock = true;
+        	this.soilBlockString = treeRep.baseBlockString;
+        }
+        	
     }
     
     public void setTreeInfo(WorldGenAbstractTree mrTree)
     {
     	this.tree = mrTree;
+    }
+    
+    public void setSoilBlock(Block soil)
+    {
+    	this.soilBlock = soil;
     }
     
     @Override
@@ -117,13 +129,16 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
     @Override
     protected boolean canSustainBush(IBlockState state)
     {
-    	if(this.soilBlock == null)
-    		return super.canSustainBush(state);
-    	else
+    	if(this.hasCustomSoilBlock)
+    	{
+    		if(this.soilBlock == null)
+    			this.soilBlock = BlockUtil.getStateFromString(this.soilBlockString).getBlock();
     		return state.getBlock() == this.soilBlock;
+    	}
+    	else
+    		return super.canSustainBush(state);		
     }
     
-    //TODO Hi, I'm a method that doesn't function as expected and I bring shame to my family 
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
     {
