@@ -48,6 +48,7 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
     public String name;
     protected WorldGenAbstractTree tree;
     protected ItemBlock itemBlock;
+    protected Block soilBlock;
     private IBaseMod mod;
     
     public BlockTestSapling(TreeRepresentation treeRep)
@@ -58,6 +59,8 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
         this.setTranslationKey(this.name);
         this.itemBlock = new ItemBlockModel<>(this);
         this.tree = treeRep.tree;
+        if(treeRep.validBaseBlock != null)
+        	this.soilBlock = treeRep.validBaseBlock.getBlock();
     }
     
     public void setTreeInfo(WorldGenAbstractTree mrTree)
@@ -111,12 +114,22 @@ public class BlockTestSapling extends BlockBush implements IGrowable, IHasGenera
         	world.setBlockState(pos, this.getDefaultState());
     }
     
-    //TODO add base block
-//    @Override
-//    protected boolean canSustainBush(IBlockState state)
-//    {
-//        return state.getBlock() == ModBlocks.endGrass || state.getBlock() == Blocks.END_STONE;
-//    }
+    @Override
+    protected boolean canSustainBush(IBlockState state)
+    {
+    	if(this.soilBlock == null)
+    		return super.canSustainBush(state);
+    	else
+    		return state.getBlock() == this.soilBlock;
+    }
+    
+    //TODO Hi, I'm a method that doesn't function as expected and I bring shame to my family 
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+    	IBlockState below = worldIn.getBlockState(pos.down());
+    	return canSustainBush(below);
+    }
     
     /**
 	 * Convert the given metadata into a BlockState for this Block

@@ -74,4 +74,10 @@ public class TreeTweaker extends BaseModFoundation<TreeTweaker>
 	{
 		return this;
 	}
+	
+	@Override
+	public boolean hasExternalResources() 
+	{
+        return true;
+    }
 }
