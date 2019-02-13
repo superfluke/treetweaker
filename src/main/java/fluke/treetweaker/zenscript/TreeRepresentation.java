@@ -1,18 +1,8 @@
 package fluke.treetweaker.zenscript;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.teamacronymcoders.base.registrysystem.BlockRegistry;
-
 import crafttweaker.CraftTweakerAPI;
-import crafttweaker.api.block.IBlock;
-import crafttweaker.mc1120.block.MCBlockDefinition;
-import crafttweaker.mc1120.block.MCItemBlock;
 import fluke.treetweaker.TreeTweaker;
-import fluke.treetweaker.block.BlockTestSapling;
 import fluke.treetweaker.util.BlockUtil;
-import fluke.treetweaker.world.FlukeTreeGen;
 import fluke.treetweaker.world.treegen.TreeGenAcacia;
 import fluke.treetweaker.world.treegen.TreeGenBraided;
 import fluke.treetweaker.world.treegen.TreeGenCanopy;
@@ -20,28 +10,27 @@ import fluke.treetweaker.world.treegen.TreeGenEuca;
 import fluke.treetweaker.world.treegen.TreeGenJungle;
 import fluke.treetweaker.world.treegen.TreeGenLargeCanopy;
 import fluke.treetweaker.world.treegen.TreeGenLargeOak;
+import fluke.treetweaker.world.treegen.TreeGenLargePine;
+import fluke.treetweaker.world.treegen.TreeGenLargeSpruce;
+import fluke.treetweaker.world.treegen.TreeGenMushroom;
 import fluke.treetweaker.world.treegen.TreeGenOak;
 import fluke.treetweaker.world.treegen.TreeGenPalm;
 import fluke.treetweaker.world.treegen.TreeGenPine;
 import fluke.treetweaker.world.treegen.TreeGenSpruce;
 import fluke.treetweaker.world.treegen.TreeGenStygian;
-import fluke.treetweaker.world.treegen.TreeGenLargePine;
-import fluke.treetweaker.world.treegen.TreeGenLargeSpruce;
-import fluke.treetweaker.world.treegen.TreeGenMushroom;
-import net.minecraft.block.Block;
+import fluke.treetweaker.world.treegen.TreeGenWillow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.BiomeDictionary;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
-import net.minecraftforge.common.BiomeDictionary;
 
 public class TreeRepresentation 
 {
-	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, STYGIAN, DEFAULT}
+	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, STYGIAN, WILLOW, DEFAULT}
 	public String treeName;
 	public IBlockState log;
 	public IBlockState leaf;
@@ -91,8 +80,6 @@ public class TreeRepresentation
 		this.dimensionWhitelist = null;
 	}
 	
-	//TODO assigning trees to early. should be delayed to init. causes problems with WorldGenHugeTree leaves
-	//or override growLeavesLayerStrict to not use a the Final leavesMetadata
 	@ZenMethod
 	public void register() 
 	{
@@ -163,6 +150,9 @@ public class TreeRepresentation
 				break;
 			case STYGIAN:
 				this.tree = new TreeGenStygian(this);
+				break;
+			case WILLOW:
+				this.tree = new TreeGenWillow(this);
 				break;
 			default:
 				CraftTweakerAPI.logWarning("Unknown tree type. Tree " + this.treeName + " defaulting to OAK");

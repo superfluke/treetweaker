@@ -57,6 +57,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 	@Override
 	public boolean generate(World worldIn, Random rand, BlockPos position)
     {
+		position = position.up();
 		int swirlHeight = rand.nextInt(treeInfo.extraTreeHeight) + treeInfo.minTreeHeight;
 		int taperHeight = 5; //needs to be equal to or less than swirl size
 		int capHeight = 3;
@@ -109,7 +110,7 @@ public class TreeGenBraided extends WorldGenAbstractTree
 						IBlockState state = worldIn.getBlockState(rootPos.add(x, -1, z));
 						if(state != AIR)
 						{
-							if(treeInfo.log == Blocks.LOG || treeInfo.log == Blocks.LOG2)
+							if(treeInfo.log.getBlock() == Blocks.LOG || treeInfo.log.getBlock() == Blocks.LOG2)
 								this.setBlockAndNotifyAdequately(worldIn, rootPos.add(x, -1, z), treeInfo.log.withProperty(BlockLog.LOG_AXIS, BlockLog.EnumAxis.X));
 							else
 								placeLogAt(worldIn, rootPos.add(x, -1, z));

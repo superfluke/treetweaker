@@ -17,6 +17,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
+//TODO unfuck however this is currenlty checking the valid soil block
 public class TreeGenStygian extends WorldGenAbstractTree  
 {
 	protected TreeRepresentation treeInfo;
