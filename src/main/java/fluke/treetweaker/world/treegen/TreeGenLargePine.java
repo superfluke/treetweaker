@@ -15,9 +15,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
-public class TreeGenLargePine extends WorldGenHugeTrees
+public class TreeGenLargePine extends WorldGenFlukeHugeTrees
 {
-	protected TreeRepresentation treeInfo;
+	//protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.PINE;
     	
 	public TreeGenLargePine(TreeRepresentation tree)
@@ -43,25 +43,25 @@ public class TreeGenLargePine extends WorldGenHugeTrees
             {
                 if (isAirLeaves(worldIn, position.up(j)))
                 {
-                    this.setBlockAndNotifyAdequately(worldIn, position.up(j), this.woodMetadata);
+                    this.setBlockAndNotifyAdequately(worldIn, position.up(j), treeInfo.log);
                 }
 
                 if (j < treeheight - 1)
                 {
                     if (isAirLeaves(worldIn, position.add(1, j, 0)))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 0), this.woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 0), treeInfo.log);
                     }
 
                     if (isAirLeaves(worldIn, position.add(1, j, 1)))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 1), this.woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, position.add(1, j, 1), treeInfo.log);
                     }
 
 
                     if (isAirLeaves(worldIn, position.add(0, j, 1)))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, position.add(0, j, 1), this.woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, position.add(0, j, 1), treeInfo.log);
                     }
                 }
             }

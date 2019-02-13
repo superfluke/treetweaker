@@ -1,7 +1,6 @@
 package fluke.treetweaker.zenscript;
 
 import crafttweaker.CraftTweakerAPI;
-import crafttweaker.IAction;
 
 public class PluginCraftTweaker 
 {

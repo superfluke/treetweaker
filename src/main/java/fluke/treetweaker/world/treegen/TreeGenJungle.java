@@ -14,9 +14,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
-public class TreeGenJungle extends WorldGenHugeTrees  
+public class TreeGenJungle extends WorldGenFlukeHugeTrees  
 {
-	protected TreeRepresentation treeInfo;
+	//protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.JUNGLE;
 
 	public TreeGenJungle(TreeRepresentation tree)
@@ -48,7 +48,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
                 {
                     k = position.getX() + (int)(1.5F + MathHelper.cos(f) * (float)i1);
                     l = position.getZ() + (int)(1.5F + MathHelper.sin(f) * (float)i1);
-                    this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), woodMetadata);
+                    this.setBlockAndNotifyAdequately(worldIn, new BlockPos(k, j - 3 + i1 / 2, l), treeInfo.log);
                 }
 
                 int j2 = 1 + rand.nextInt(2);
@@ -67,7 +67,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
 
                 if (this.isAirLeaves(worldIn,blockpos))
                 {
-                    this.setBlockAndNotifyAdequately(worldIn, blockpos, woodMetadata);
+                    this.setBlockAndNotifyAdequately(worldIn, blockpos, treeInfo.log);
 
                     if (i2 > 0)
                     {
@@ -82,7 +82,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
 
                     if (this.isAirLeaves(worldIn,blockpos1))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos1, woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, blockpos1, treeInfo.log);
 
                         if (i2 > 0)
                         {
@@ -95,7 +95,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
 
                     if (this.isAirLeaves(worldIn,blockpos2))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos2, woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, blockpos2, treeInfo.log);
 
                         if (i2 > 0)
                         {
@@ -108,7 +108,7 @@ public class TreeGenJungle extends WorldGenHugeTrees
 
                     if (this.isAirLeaves(worldIn,blockpos3))
                     {
-                        this.setBlockAndNotifyAdequately(worldIn, blockpos3, woodMetadata);
+                        this.setBlockAndNotifyAdequately(worldIn, blockpos3, treeInfo.log);
 
                         if (i2 > 0)
                         {

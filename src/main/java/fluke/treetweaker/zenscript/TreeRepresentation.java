@@ -1,10 +1,8 @@
 package fluke.treetweaker.zenscript;
 
 import crafttweaker.CraftTweakerAPI;
-import crafttweaker.api.block.IBlock;
-import crafttweaker.mc1120.block.MCBlockDefinition;
-import crafttweaker.mc1120.block.MCItemBlock;
-import fluke.treetweaker.world.FlukeTreeGen;
+import fluke.treetweaker.TreeTweaker;
+import fluke.treetweaker.util.BlockUtil;
 import fluke.treetweaker.world.treegen.TreeGenAcacia;
 import fluke.treetweaker.world.treegen.TreeGenBraided;
 import fluke.treetweaker.world.treegen.TreeGenCanopy;
@@ -12,27 +10,27 @@ import fluke.treetweaker.world.treegen.TreeGenEuca;
 import fluke.treetweaker.world.treegen.TreeGenJungle;
 import fluke.treetweaker.world.treegen.TreeGenLargeCanopy;
 import fluke.treetweaker.world.treegen.TreeGenLargeOak;
+import fluke.treetweaker.world.treegen.TreeGenLargePine;
+import fluke.treetweaker.world.treegen.TreeGenLargeSpruce;
+import fluke.treetweaker.world.treegen.TreeGenMushroom;
 import fluke.treetweaker.world.treegen.TreeGenOak;
 import fluke.treetweaker.world.treegen.TreeGenPalm;
 import fluke.treetweaker.world.treegen.TreeGenPine;
 import fluke.treetweaker.world.treegen.TreeGenSpruce;
-import fluke.treetweaker.world.treegen.TreeGenLargePine;
-import fluke.treetweaker.world.treegen.TreeGenLargeSpruce;
-import fluke.treetweaker.world.treegen.TreeGenMushroom;
-import net.minecraft.block.Block;
+import fluke.treetweaker.world.treegen.TreeGenStygian;
+import fluke.treetweaker.world.treegen.TreeGenWillow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.BiomeDictionary;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
-import net.minecraftforge.common.BiomeDictionary;
 
 public class TreeRepresentation 
 {
-	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, DEFAULT}
+	public static enum TreeType {OAK, LARGE_OAK, JUNGLE, CANOPY, LARGE_CANOPY, PINE, LARGE_PINE, SPRUCE, LARGE_SPRUCE, ACACIA, RED_MUSHROOM, BROWN_MUSHROOM, BRAIDED, PALM, EUCA, STYGIAN, WILLOW, DEFAULT}
 	public String treeName;
 	public IBlockState log;
 	public IBlockState leaf;
@@ -42,6 +40,10 @@ public class TreeRepresentation
 	public Biome spawnBiome;
 	public BiomeDictionary.Type spawnBiomeType;
 	public int[] dimensionWhitelist;
+	public boolean registerSapling = false;
+	public String logString;
+	public String leafString;
+	public String baseBlockString;
 	
 	@ZenProperty
 	public int minTreeHeight;
@@ -57,7 +59,8 @@ public class TreeRepresentation
 	public boolean restrictSpawnRange;
 	
 	
-	private WorldGenAbstractTree tree;
+	public WorldGenAbstractTree tree;
+	
 	
 	public TreeRepresentation(String name)
 	{
@@ -145,25 +148,30 @@ public class TreeRepresentation
 			case BROWN_MUSHROOM:
 				this.tree = new TreeGenMushroom(this);
 				break;
+			case STYGIAN:
+				this.tree = new TreeGenStygian(this);
+				break;
+			case WILLOW:
+				this.tree = new TreeGenWillow(this);
+				break;
 			default:
 				CraftTweakerAPI.logWarning("Unknown tree type. Tree " + this.treeName + " defaulting to OAK");
 				this.tree = new TreeGenOak(this);
 		}
 		extraTreeHeight += 1; //so rand function doesnt break if extra height is 0 and so the extra height generates from 0-num inclusive
-		CraftTweakerAPI.logInfo("Adding " + this.treeType.toString() + " tree '" + this.treeName + "' to world gen");
-		GameRegistry.registerWorldGenerator(new FlukeTreeGen(this.tree, generationFrequency, spawnBiome, spawnBiomeType, dimensionWhitelist, generationAttempts, restrictSpawnRange), generationWeight);
+		TreeRegistrar.treesToRegister.add(this);
 	}
 	
 	@ZenMethod
 	public void setLog(String logBlock)
 	{
-		this.log =  getStateFromString(logBlock);
+		this.logString = logBlock;
 	}
 	
 	@ZenMethod
 	public void setLeaf(String leafBlock)
 	{
-		this.leaf = getStateFromString(leafBlock);
+		this.leafString = leafBlock;
 	}
 	
 	@ZenMethod
@@ -245,7 +253,7 @@ public class TreeRepresentation
 	@ZenMethod
 	public void setBaseBlock(String block)
 	{
-		this.validBaseBlock = getStateFromString(block);
+		this.baseBlockString = block;
 	}
 	
 	@ZenMethod
@@ -266,29 +274,50 @@ public class TreeRepresentation
 		this.dimensionWhitelist = new int[] {dim};
 	}
 	
-	private IBlockState getStateFromString(String block)
+	@ZenMethod
+	public void addSapling()
 	{
-		String[] splitty = block.split(":");
-		Block blocky;
-		if(splitty.length > 2)
+		if(TreeTweaker.preInitDone)
+			CraftTweakerAPI.logWarning("Failed to register sapling. TreeTweaker script must include #loader preinit");
+
+		this.registerSapling = true;
+	}
+	
+	
+	
+	public void setTreeBlocksFromString()
+	{
+		IBlockState state;
+		IBlockState dirt = Blocks.DIRT.getDefaultState();
+		if(this.logString != null)
 		{
-			blocky = Block.getBlockFromName(splitty[0] + ":" + splitty[1]);
-			if(blocky == null)
+			state = BlockUtil.getStateFromString(this.logString);
+			if(state == null)
 			{
-				CraftTweakerAPI.logWarning("Could not find block " + block + " for tree " + this.treeName + ". Defaulting to minecraft:dirt");
-				return Blocks.DIRT.getDefaultState();
+				CraftTweakerAPI.logWarning("Could not find block " + this.logString + " for tree " + this.treeName + " log. Defaulting to minecraft:dirt");
+				state = dirt;
 			}
-			return blocky.getStateFromMeta(Integer.valueOf(splitty[2]));
+			this.log =  state;
 		}
-		else
+		if(this.leafString != null)
 		{
-			blocky = Block.getBlockFromName(block);
-			if(blocky == null)
+			state = BlockUtil.getStateFromString(this.leafString);
+			if(state == null)
 			{
-				CraftTweakerAPI.logWarning("Could not find block " + block + " for tree " + this.treeName + ". Defaulting to minecraft:dirt");
-				return Blocks.DIRT.getDefaultState();
+				CraftTweakerAPI.logWarning("Could not find block " + this.leafString + " for tree " + this.treeName + " leaf. Defaulting to minecraft:dirt");
+				state = dirt;
 			}
-			return blocky.getDefaultState();
+			this.leaf = state;
+		}
+		if(this.baseBlockString != null)
+		{
+			state = BlockUtil.getStateFromString(this.baseBlockString);
+			if(state == null)
+			{
+				CraftTweakerAPI.logWarning("Could not find block " + this.baseBlockString + " for tree " + this.treeName + " base-block. Defaulting to minecraft:dirt");
+				state = dirt;
+			}
+			this.validBaseBlock = state;
 		}
 	}
 }

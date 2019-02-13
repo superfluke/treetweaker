@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.5"
+version = "1.6"
 group = "fluke.treetweaker"
 archivesBaseName = "treetweaker"
 
@@ -21,10 +21,10 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.4.2705"
+    version = "1.12.2-14.23.4.2749"
     runDir = "run"
     
-    mappings = "snapshot_20171003"
+    mappings = "snapshot_20180810"
 }
 
 repositories {
@@ -35,9 +35,11 @@ repositories {
 }
 
 dependencies {
-	deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.6.467"
-	deobfCompile "CraftTweaker2:CraftTweaker2-API:4.1.6.467"
-	deobfCompile "CraftTweaker2:ZenScript:4.1.6.467"
+	deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.9.491"
+	deobfCompile "CraftTweaker2:CraftTweaker2-API:4.1.9.491"
+	deobfCompile "CraftTweaker2:ZenScript:4.1.9.491"
+	
+	deobfCompile "com.teamacronymcoders.base:base:1.12.2-3.11.0-SNAPSHOT.174"
 	
 	compile fileTree(dir: 'libs', includes: ['*.jar']) 
 }

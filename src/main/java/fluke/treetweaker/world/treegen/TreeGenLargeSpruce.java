@@ -11,9 +11,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenHugeTrees;
 
-public class TreeGenLargeSpruce extends WorldGenHugeTrees
+public class TreeGenLargeSpruce extends WorldGenFlukeHugeTrees
 {
-	protected TreeRepresentation treeInfo;
+	//protected TreeRepresentation treeInfo;
     protected TreeType treeType = TreeType.PINE;
     	
 	public TreeGenLargeSpruce(TreeRepresentation tree)
