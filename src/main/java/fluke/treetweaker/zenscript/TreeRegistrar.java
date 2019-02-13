@@ -12,7 +12,7 @@ import fluke.treetweaker.world.FlukeTreeGen;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 
-//TODO helix tree sapling broken
+
 public class TreeRegistrar 
 {
 	public static List<TreeRepresentation> treesToRegister = new ArrayList<>();
