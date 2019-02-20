@@ -44,6 +44,7 @@ public class TreeRepresentation
 	public String logString;
 	public String leafString;
 	public String baseBlockString;
+	public String genBiomeString;
 	
 	@ZenProperty
 	public int minTreeHeight;
@@ -243,11 +244,7 @@ public class TreeRepresentation
 	@ZenMethod
 	public void setGenBiome(String biome)
 	{
-		this.spawnBiome = Biome.REGISTRY.getObject(new ResourceLocation(biome));
-		if(this.spawnBiome == null)
-		{
-			CraftTweakerAPI.logWarning("Could not find biome " + biome + " for tree " + this.treeName);
-		}
+		this.genBiomeString = biome;
 	}
 	
 	@ZenMethod
@@ -318,6 +315,14 @@ public class TreeRepresentation
 				state = dirt;
 			}
 			this.validBaseBlock = state;
+		}
+		if(this.genBiomeString != null)
+		{
+			this.spawnBiome = Biome.REGISTRY.getObject(new ResourceLocation(this.genBiomeString));
+			if(this.spawnBiome == null)
+			{
+				CraftTweakerAPI.logWarning("Could not find biome " + this.genBiomeString + " for tree " + this.treeName);
+			}
 		}
 	}
 }
